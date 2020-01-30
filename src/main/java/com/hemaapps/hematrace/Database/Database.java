@@ -71,7 +71,6 @@ public class Database {
 
     public void loadProperties() {
 
-        App app = new App();
         try (InputStream input = new FileInputStream("src/main/resources/properties/database.properties")) {
             Properties prop = new Properties();
             prop.load(input);
