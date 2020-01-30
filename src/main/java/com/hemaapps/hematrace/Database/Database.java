@@ -63,6 +63,7 @@ public class Database {
                     log.info("Database connection successful.");
                 }
             } catch (SQLException ex) {
+                log.error(String.format("Database connection failed with message %s.", ex.getMessage()));
                 System.out.println(ex.getMessage());
             }
         }
@@ -79,9 +80,9 @@ public class Database {
             setDbPassword(prop.getProperty("dbPassword"));
             setDbName(prop.getProperty("dbName"));
             setDbPort(prop.getProperty("dbPort"));
+            log.info("Database properties successfully loaded.");
         } catch (IOException ex) {
-            System.out.println("nuts");
-            System.out.println(ex.getMessage());
+            log.error(String.format("Database properties failed to load: %s.", ex.getMessage()));
         }
 
         
@@ -95,6 +96,12 @@ public class Database {
 
     }
     
+    /**
+     * Return ResultSet from stored procedure
+     * @param query
+     * @return
+     * @throws SQLException 
+     */
     public ResultSet callableStatementRs(String query) throws SQLException {
         try {
             if (connection == null) {
@@ -104,7 +111,7 @@ public class Database {
             cs = connection.prepareCall(query);
             rs = cs.executeQuery();
         } catch (SQLException ex) {
-            //JDBCError("preparedStatement", query, true, ex.getMessage());
+            log.error(String.format("Prepared statement: %s failed with message: %s.", query, ex.getMessage()));
 
         }
 

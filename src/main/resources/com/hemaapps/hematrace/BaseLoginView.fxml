@@ -18,7 +18,7 @@
          <VBox.margin>
             <Insets top="15.0" />
          </VBox.margin></ImageView>
-      <Label text="Blood Product Tracking Application" textFill="WHITE" />
+      <Label text="HemaTrace" textFill="WHITE" />
       <ComboBox fx:id="baseComboBox" prefHeight="27.0" prefWidth="292.0" promptText="Select base">
          <VBox.margin>
             <Insets top="10.0" />

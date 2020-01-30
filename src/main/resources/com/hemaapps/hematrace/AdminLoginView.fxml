@@ -19,7 +19,7 @@
          <VBox.margin>
             <Insets top="15.0" />
          </VBox.margin></ImageView>
-      <Label text="Blood Product Tracking Application" textFill="WHITE" />
+      <Label text="HemaTrace" textFill="WHITE" />
       <TextField fx:id="userNameText" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="245.0" />
       <PasswordField fx:id="passwordText" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="245.0" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
