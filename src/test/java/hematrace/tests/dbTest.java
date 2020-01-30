@@ -15,14 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class dbTest {
     
+    
+    Database db = new Database();
+    
     public dbTest() {
     }
     
     @Test
     public void testDbConnection() {
-        Database db = new Database();
         db.init();
         assert(db.getConnection() != null);
+    }
+    
+    @Test
+    public void testDbConnectionStringSet() {
+        assert(db.isConnectionStringSet());
     }
     
 }

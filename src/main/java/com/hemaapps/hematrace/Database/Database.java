@@ -39,8 +39,6 @@ public class Database {
     private Connection connection;
     private Statement stmt;
     private ResultSet rs;
-    private boolean debug = true; // for debug mode
-    private boolean logToFile = false; // for debugging, log to file or screen
     private boolean connectionStringSet = false; // do we have a connection string?
 
     public Database() {
@@ -126,22 +124,6 @@ public class Database {
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
-    }
-
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    public boolean isLogToFile() {
-        return logToFile;
-    }
-
-    public void setLogToFile(boolean logToFile) {
-        this.logToFile = logToFile;
     }
 
     public String getConnectionString() {
