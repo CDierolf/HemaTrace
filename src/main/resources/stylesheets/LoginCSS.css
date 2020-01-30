@@ -1,0 +1,30 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Aug 19, 2019, 8:59:39 AM
+    Author     : pis7ftw
+*/
+
+* {
+    
+}
+
+.root{
+    -fx-background-color: linear-gradient(to bottom, #99773D, #111111);
+    -fx-text-fill: #FFFFFF;
+}
+
+.label {
+    -fx-font: 30px 'Arial'
+}
+
+
+#adminLoginButton:hover {
+    -fx-text-fill: #99773D;
+}
+#adminLoginButton:pressed {
+    -fx-text-fill: #FFFFFF;
+}
