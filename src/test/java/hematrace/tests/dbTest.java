@@ -5,31 +5,26 @@
  */
 package hematrace.tests;
 
-import com.hemaapps.hematrace.Database.Database;
+import com.hemaapps.hematrace.Database.DatabaseService;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author pis7ftw
  */
 public class dbTest {
-    
-    
-    Database db = new Database();
-    
-    public dbTest() {
-    }
+    private DatabaseService databaseService = new DatabaseService();
+   
     
     @Test
     public void testDbConnection() {
-        db.init();
-        assert(db.getConnection() != null);
+        databaseService.init();
+        assert(databaseService.getConnection() != null);
     }
     
     @Test
     public void testDbConnectionStringSet() {
-        assert(db.isConnectionStringSet());
+        assert(databaseService.isConnectionStringSet());
     }
     
 }

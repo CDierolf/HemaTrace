@@ -1,6 +1,5 @@
 package com.hemaapps.hematrace.Database;
 
-import com.hemaapps.hematrace.App;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ import org.slf4j.Logger;
  */
 //Imports
 //Begin Subclass Database
-public class Database {
+public class DatabaseService {
     
-    final static Logger log = LoggerFactory.getLogger(Database.class);
+    final static Logger log = LoggerFactory.getLogger(DatabaseService.class);
 
     private String connectionString = "";
 
@@ -41,8 +41,6 @@ public class Database {
     private ResultSet rs;
     private boolean connectionStringSet = false; // do we have a connection string?
 
-    public Database() {
-    }
 
     public void init() {
         if (!connectionStringSet) {
@@ -113,6 +111,52 @@ public class Database {
         }
 
         return rs;
+    }
+    
+    public int callableStatementReturnInt(String query, String[] args,
+            String[] datatypes) throws SQLException {
+        CallableStatement cs = null;
+        int returnValue = 0;
+        try {
+            if(connection == null)
+                connection = connectionPool.getConnection();
+
+            cs = connection.prepareCall(query);
+            // This section sets up parameters for the query from the arguments            
+            for (int i = 0; i < args.length; i++) {
+                if ("int".equalsIgnoreCase(datatypes[i])) {
+                    cs.setInt(i+1, Integer.parseInt(args[i]));
+                } else if ("bit".equalsIgnoreCase(datatypes[i])) {
+                    cs.setBoolean(i+1, Boolean.parseBoolean(args[i]) );
+                } else if ("money".equalsIgnoreCase(datatypes[i])) {
+                    cs.setDouble(i+1, Double.parseDouble(args[i]) );
+                } else if ("string".equalsIgnoreCase(datatypes[i])) {
+                    cs.setString(i+1, args[i]);
+                } else if ("date".equalsIgnoreCase(datatypes[i])) {
+                    SimpleDateFormat d = new SimpleDateFormat("y-M-d");
+                    cs.setDate(i+1, java.sql.Date.valueOf(args[i]));
+                } else if ("time".equalsIgnoreCase(datatypes[i])) {
+                    SimpleDateFormat d = new SimpleDateFormat("HH:mm:ss");
+                    cs.setDate(i+1, java.sql.Date.valueOf(args[i]));
+                } else if ("datetime".equalsIgnoreCase(datatypes[i])) {
+                    java.util.Date result;
+                    SimpleDateFormat d = new SimpleDateFormat("y-M-d HH:mm:ss");//2018-09-18 11:09:44
+                    result = d.parse (args[i]);
+                    java.sql.Date sqlDate = new java.sql.Date(result.getTime());
+
+                    cs.setDate(i+1, sqlDate);
+                } // other data types
+            }
+            cs.registerOutParameter(args.length+1, java.sql.Types.INTEGER);
+            cs.execute();
+            returnValue = cs.getInt(args.length+1);
+        } catch (Exception e) {
+            //String module, String query, Boolean exit, String error
+            log.error("Error", e);
+        } finally {
+            connection.close();
+        }
+        return returnValue;
     }
 
     public void setDbIpAddress(String dbIpAddress) {

@@ -1,27 +1,97 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.hemaapps.hematrace.LoginViewControllers;
 
+import com.hemaapps.hematrace.DAO.UserDAO;
+import com.hemaapps.hematrace.DashboardViewControllers.AdminDashboardViewController;
+import com.hemaapps.hematrace.utilities.PasswordUtilities;
+import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * FXML Controller class
- *
- * @author pis7ftw
+/*
+ * AdminLoginViewController
+ * Associated FXML: AdminLoginView
+ * Created 2-1-2020
+ * Author: Christopher Dierolf
  */
-
-
 public class AdminLoginViewController implements Initializable {
+    
+    private static final Logger log = LoggerFactory.getLogger(AdminLoginViewController.class);
+    private PasswordUtilities passwordUtilities = null;
+    
+    @FXML
+    private Button closeButton;
+    @FXML
+    private TextField userNameTextField;
+    @FXML
+    private PasswordField passwordField;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("fuck yeah");
+        
     }
+    
+    public void handleLoginButtonClicked(ActionEvent event) throws SQLException {
+        if (userIsAuthorized()) {
+            loadAdminDashboard(event);
+        }
+    }
+    
+    
+    public void handleCloseButtonClicked() {
+        log.info("Application is exiting from AdminLoginViewController.");
+        Platform.exit();
+    }
+    
+    private boolean userIsAuthorized() throws SQLException {
+        
+        boolean userIsAuthenticated;
+        String userName = userNameTextField.getText();
+        String pWord = passwordField.getText();
+        System.out.println("Username: " + userName + " Password: " + pWord);
+        long loggedIn = 0;
+        
+        try {
+            loggedIn = UserDAO.loginUser(userName, pWord);
+        } catch (NoSuchAlgorithmException ex) {
+            java.util.logging.Logger.getLogger(AdminLoginViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return loggedIn > 0;
+    }
+    
+    private void loadAdminDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(AdminDashboardViewController.class.getResource("../AdminDashboardView.fxml"));
 
-
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Parent adminDashboardViewParent = loader.load();
+            Scene adminDashboardView = new Scene(adminDashboardViewParent);
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            window.setScene(adminDashboardView);
+            // TODO get user's real first name
+            window.setTitle("Welcome, " + " Administrator Dashboard");
+            window.setResizable(false);
+            window.show();
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(AdminLoginViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

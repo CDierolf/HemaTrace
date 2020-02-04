@@ -4,26 +4,27 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="15.0" stylesheets="@../../../stylesheets/LoginCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemaapps.hematrace.LoginViewControllers.BaseLoginViewController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../stylesheets/LoginCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemaapps.hematrace.LoginViewControllers.BaseLoginViewController">
    <children>
-      <ImageView fx:id="logo" fitHeight="138.0" fitWidth="254.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../Images/vlflogo.png" />
-         </image>
-         <VBox.margin>
-            <Insets top="15.0" />
-         </VBox.margin></ImageView>
-      <Label text="HemaTrace" textFill="WHITE" />
-      <ComboBox fx:id="baseComboBox" prefHeight="27.0" prefWidth="292.0" promptText="Select base">
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin></ComboBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+      <VBox alignment="BOTTOM_CENTER" prefHeight="226.0" prefWidth="600.0" spacing="40.0">
+         <children>
+            <Label stylesheets="@../../../stylesheets/LoginCSS.css" text="HemaTrace" textFill="WHITE">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="baseComboBox" prefHeight="27.0" prefWidth="292.0" promptText="Select base">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </ComboBox>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" prefHeight="105.0" prefWidth="600.0" spacing="30.0">
          <children>
             <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleBaseLoginButtonClicked" text="Login" />
             <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButtonClicked" text="Close">
@@ -33,7 +34,7 @@
             </Button>
          </children>
       </HBox>
-      <HBox alignment="BOTTOM_RIGHT" prefHeight="204.0" prefWidth="600.0" stylesheets="@../../../CSS/LoginCSS.css">
+      <HBox alignment="BOTTOM_RIGHT" prefHeight="148.0" prefWidth="600.0" stylesheets="@/stylesheets/LoginCSS.css">
          <children>
             <Button fx:id="adminLoginButton" mnemonicParsing="false" onAction="#handleAdminLoginButtonClicked" style="-fx-background-color: #111111;" text="Admin Login" textFill="WHITE">
                <HBox.margin>
