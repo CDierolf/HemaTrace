@@ -1,19 +1,23 @@
 package com.hemaapps.hematrace.LoginViewControllers;
 
+import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DashboardViewControllers.BaseDashboardViewController;
 import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.utilities.Alerts;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,6 +25,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.ImageView;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -45,61 +50,40 @@ public class BaseLoginViewController implements Initializable {
     private Button closeButton;
     @FXML
     private Button adminLoginButton;
-    
+
     final static Logger log = LoggerFactory.getLogger(BaseLoginViewController.class);
-    
+
     private final DatabaseService db = new DatabaseService();
     private Alerts alerts = new Alerts();
 
     //Database db = new Database();
-    ArrayList<String> bases = new ArrayList<>();
+    List<String> bases = new ArrayList<>();
 
     /**
-     * Initializes the controller class.
-     * Calls getBases() to retrieve a list of bases
-     * from the database to populate the baseComboBox
+     * Initializes the controller class. Calls getBases() to retrieve a list of
+     * bases from the database to populate the baseComboBox
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
         log.info("BaseLoginViewController successfully initialized.");
-
         try {
-            getBases();
-            bases.forEach((s) -> {
-                baseComboBox.getItems().add(s);
-            });
-            log.info("baseComboBox successfully populated with base names from database.");
+            populateBaseComboBox();
         } catch (SQLException ex) {
-            log.error("An error occured trying to load the bases.", ex);
+            java.util.logging.Logger.getLogger(BaseLoginViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /**
      * Retrieve the list of base names from the database
-     * @throws SQLException 
+     *
+     * @throws SQLException
      */
-    private void getBases() throws SQLException {
-        db.init();
-        String query = "{ call [sp_retrieveBaseNames] }";
-        ResultSet rs = null;
-        rs = db.callableStatementRs(query);
-
-        if (rs != null) {
-            try {
-                while (rs.next()) {
-                    try {
-                        bases.add(rs.getString("name"));
-                    } catch (SQLException ex) {
-                        log.error("Inner Exception Error: An error occured parsing the resultset of bases returned from the database.", ex);             
-                    }
-                }
-            } catch (SQLException ex) {
-                log.error("Outer Exception: An error occured parsing the resultset of bases returned from the database.", ex);
-            }
-        } else {
-            log.error("No bases were returned from the database.");
-        }
+    private void populateBaseComboBox() throws SQLException {
+        BaseDAO baseDAO = BaseDAO.getInstance();
+        bases = baseDAO.getBaseNames();
+        bases.forEach((s) -> {
+            baseComboBox.getItems().add(s);
+        });
     }
 
     /**
@@ -112,7 +96,7 @@ public class BaseLoginViewController implements Initializable {
 
         // Gotta go up one level to access resources
         FXMLLoader loader = new FXMLLoader(BaseLoginViewController.class.getResource("../AdminLoginView.fxml"));
-        
+
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent baseDashboardViewParent = loader.load();
         Scene baseDashboardView = new Scene(baseDashboardViewParent, 640, 400);
@@ -126,8 +110,7 @@ public class BaseLoginViewController implements Initializable {
     }
 
     /**
-     * Method to login into the Base Dashboard
-     * Ensure a base is selected.
+     * Method to login into the Base Dashboard Ensure a base is selected.
      *
      * @param event
      * @throws IOException
@@ -150,6 +133,12 @@ public class BaseLoginViewController implements Initializable {
 
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
+            double width = 940;
+            double height = 1391;
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            window.setX((screenBounds.getWidth() - width) / 4);
+            window.setY((screenBounds.getHeight() - height) / 2);
+
             window.setScene(baseDashboardScene);
             window.setTitle(title + baseValue + " Dashboard");
             window.setResizable(false);
@@ -164,10 +153,11 @@ public class BaseLoginViewController implements Initializable {
         }
 
     }
-    
+
     /**
      * Method to exit the application
-     * @param event 
+     *
+     * @param event
      */
     public void handleCloseButtonClicked() {
         log.info("Application is closing.");

@@ -10,9 +10,18 @@ and open the template in the editor.
 
 #baseIdentifierLabel {
     -fx-text-fill: #FFF;
-    -fx-font: 40px 'Arial Bold'
+    -fx-font: 40px 'Arial Bold';
+}
+
+#root {
+    -fx-background-color: #FFFFFF;
 }
 
 #dashboardButton {
     -fx-background-radius: 100;
+}
+
+#productLabel {
+    -fx-text-fill: #111;
+    -fx-font: 30px 'Arial Bold';
 }
