@@ -1,0 +1,39 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Aug 19, 2019, 12:31:01 PM
+    Author     : pis7ftw
+*/
+
+
+.circle:hover {
+    -fx-fill: #111;
+}
+.viewDetailsButton:hover {
+    -fx-text-fill: #99773D;
+}
+.label {
+    -fx-text-fill: #FFF;
+    -fx-font: 16px 'Arial Bold'
+}
+
+#dataAnchorPane {
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-border-color: #99773D;
+}
+.dataLabel {
+    -fx-text-fill: #111;
+}
+#baseLabel {
+    -fx-text-fill: #111;
+    -fx-font: 30px 'Arial Bold'
+        
+}
+#dashboardLabel {
+    -fx-text-fill: #FFF;
+    -fx-font: 40px 'Arial Bold'
+}
