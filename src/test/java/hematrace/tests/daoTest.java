@@ -1,10 +1,10 @@
 package hematrace.tests;
 
 import com.hemaapps.hematrace.DAO.BaseProductsDAO;
-import com.hemaapps.hematrace.Model.BloodProduct;
-import java.util.ArrayList;
-import java.util.List;
+import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
 import org.junit.jupiter.api.Test;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /** 
  * @Course: SDEV 350 ~ Java Programming II
@@ -17,13 +17,20 @@ import org.junit.jupiter.api.Test;
 
 //Begin Subclass daoTest
 public class daoTest {
-    private BaseProductsDAO dao = new BaseProductsDAO();
+    private BaseProductsDAO pDao = new BaseProductsDAO();
+    private BaseTransactionDAO tDao = new BaseTransactionDAO();
     @Test
     public void testBaseProductDAOService() {
-        
-        dao.initDao(2);
-        assert(dao.getBaseBloodProducts(2) != null);
-        
+        pDao.setBaseBloodProductsResultSet(2);
+        ResultSet rs = pDao.getResultSet();
+        assert(rs != null);
+    }
+    
+    @Test
+    public void testBaseTransactionDAOService() throws SQLException {
+        tDao.setBaseId(2);
+        tDao.setTransactions();
+        assert(tDao.getTransactionResultSet() != null);
     }
 
 } //End Subclass daoTest

@@ -1,8 +1,6 @@
 package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
-import com.hemaapps.hematrace.Model.BloodProduct;
-import com.hemaapps.hematrace.Model.BloodProductImpl;
 import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;
@@ -24,11 +22,13 @@ import org.slf4j.LoggerFactory;
 public class BaseProductsDAO {
 
     private final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
+    
     private int baseId;
     private int maxNumProducts;
+    private ResultSet resultSet;
     private List<PlasmaImpl> basePlasmaProducts = new ArrayList<>();
     private List<PRBCImpl> basePRBCProducts = new ArrayList<>();
-    List<Object> baseProducts = new ArrayList<>();
+    private List<Object> baseProducts = new ArrayList<>();
 
     public List<Object> getBaseProducts() {
         baseProducts.add(basePlasmaProducts);
@@ -38,10 +38,6 @@ public class BaseProductsDAO {
 
     public void setBaseProducts(List<Object> baseProducts) {
         this.baseProducts = baseProducts;
-    }
-
-    public void initDao(int baseId) {
-        parseBaseProductResultSet(getBaseProductResultSet(baseId));
     }
 
     public void setBaseId(int baseId) {
@@ -60,8 +56,10 @@ public class BaseProductsDAO {
         return this.maxNumProducts;
     }
 
-    public void getBaseBloodProductsResultSet(int baseId) {
-        parseBaseProductResultSet(getBaseProductResultSet(baseId));
+    public void setBaseBloodProductsResultSet(int baseId) {
+        getBaseProductResultSet(baseId);
+        parseBaseProductResultSet();
+        
     }
 
     public List<PlasmaImpl> getBasePlasmaProducts() {
@@ -71,8 +69,17 @@ public class BaseProductsDAO {
     public List<PRBCImpl> getBasePRBCProducts() {
         return basePRBCProducts;
     }
+    
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
 
-    private ResultSet getBaseProductResultSet(int baseId) {
+    public void setResultSet(ResultSet resultSet) {
+        this.resultSet = resultSet;
+    }
+
+    private void getBaseProductResultSet(int baseId) {
+        setBaseId(baseId);
         List<String> baseValues = new ArrayList<>();
         List<String> dataTypes = new ArrayList<>();
         DatabaseService db = new DatabaseService();
@@ -89,11 +96,11 @@ public class BaseProductsDAO {
             log.error("ERROR: ", ex);
         }
 
-        return rs;
+        this.setResultSet(rs);
     }
 
-    private void parseBaseProductResultSet(ResultSet rs) {
-
+    private void parseBaseProductResultSet() {
+        ResultSet rs = this.getResultSet();
         if (rs != null) {
             try {
                 while (rs.next()) {
@@ -132,10 +139,12 @@ public class BaseProductsDAO {
                 log.error("ERROR: ", ex);
             }
         } else {
-            log.error("Resultset was null.");
+            log.warn("Resultset was null.");
         }
-        System.out.println("PRBC PRODUCT #: " + basePRBCProducts.size());
-        System.out.println("PLASMA PRODUCT #: " + basePlasmaProducts.size());
+        log.info("PRBC Products obtained for baseID: " + getBaseId() 
+                + ". " + basePRBCProducts.size() + " products retrieved.");
+        log.info("PLASMA Products obtained for baseID: " + getBaseId() + ". " 
+                + basePlasmaProducts.size() + " products retrieved.");
     }
 
     public int getCurrentNumberOfProductsForBase(int base) throws SQLException {

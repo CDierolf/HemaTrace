@@ -7,26 +7,38 @@ package com.hemaapps.hematrace.DashboardViewControllers;
 
 import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.BaseProductsDAO;
+import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
+import com.hemaapps.hematrace.Model.Transaction;
+import com.hemaapps.hematrace.shapes.StatusCircle;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -46,12 +58,17 @@ public class BaseDashboardViewController implements Initializable {
     private GridPane productGridPane;
     @FXML
     private VBox gridPaneVBox;
+    @FXML
+    private TableView transactionTableView;
 
-    int numBaseProducts = 0;
-    int baseId;
+    private int numBaseProducts = 0;
+    private int baseId;
+    private ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
+
     String baseLocation = "";
     private final BaseProductsDAO dao = new BaseProductsDAO();
-    BaseDAO baseDAO;
+    private final BaseTransactionDAO baseTransactionDAO = new BaseTransactionDAO();
+    private BaseDAO baseDAO;
 
     /**
      * Initializes the controller class.
@@ -68,7 +85,7 @@ public class BaseDashboardViewController implements Initializable {
      *
      * @param baseLocation
      */
-    public void initData(String baseLocation) {
+    public void initData(String baseLocation) throws SQLException {
 
         try {
             baseDAO = BaseDAO.getInstance();
@@ -81,6 +98,9 @@ public class BaseDashboardViewController implements Initializable {
         getNumberOfBaseProducts();
         getBaseProducts();
         adjustGridPaneForBase();
+        getTransactionData();
+        adjustTableView();
+        addTableViewData();
     }
 
     public void handleLogoutButtonClick(ActionEvent event) throws IOException {
@@ -100,19 +120,54 @@ public class BaseDashboardViewController implements Initializable {
     private void adjustGridPaneForBase() {
         productGridPane.setVgap(10);
         productGridPane.setHgap(10);
+        productGridPane.setAlignment(Pos.CENTER);
+        for (int i = 0; i < numBaseProducts; i++) {
+            RowConstraints rc = new RowConstraints();
+            rc.setMinHeight(10.0);
+            rc.setMaxHeight(50.0);
+            rc.setValignment(VPos.CENTER);
+
+        }
+
+        for (int i = 0; i < COLUMN_COUNT; i++) {
+            ColumnConstraints cc = new ColumnConstraints();
+            cc.setMinWidth(30);
+            cc.setMaxWidth(75);
+            cc.setHalignment(HPos.CENTER);
+        }
 
         addColumnLabels();
         addUnitLabels();
         addDonorNumbersAndTypes();
         addExpDateAndObtainedDate();
+        addStatusCircleShape();
     }
 
     private void addColumnLabels() {
         Label unitNumLabel = new Label("Unit #");
-        unitNumLabel.setAlignment(Pos.CENTER);
         unitNumLabel.setStyle(COL_LABEL_STYLE);
-        unitNumLabel.setPadding(new Insets(20, 20, 20, 200));
+        unitNumLabel.setPadding(new Insets(10));
         productGridPane.add(unitNumLabel, 0, 0);
+        Label donorNumLabel = new Label("Donor #");
+        donorNumLabel.setStyle(COL_LABEL_STYLE);
+        donorNumLabel.setPadding(new Insets(10));
+        productGridPane.add(donorNumLabel, 1, 0);
+        Label productTypeLabel = new Label("Product Type");
+        productTypeLabel.setStyle(COL_LABEL_STYLE);
+        productTypeLabel.setPadding(new Insets(10));
+        productGridPane.add(productTypeLabel, 2, 0);
+        Label expDateLabel = new Label("Expiration Date");
+        expDateLabel.setStyle(COL_LABEL_STYLE);
+        expDateLabel.setPadding(new Insets(10));
+        productGridPane.add(expDateLabel, 3, 0);
+        Label obtainedDateLabel = new Label("Date Obtained");
+        obtainedDateLabel.setStyle(COL_LABEL_STYLE);
+        obtainedDateLabel.setPadding(new Insets(10));
+        productGridPane.add(obtainedDateLabel, 4, 0);
+        Label productCircleStatusLabel = new Label("Status");
+        productCircleStatusLabel.setStyle(COL_LABEL_STYLE);
+        productCircleStatusLabel.setPadding(new Insets(10));
+        productGridPane.add(productCircleStatusLabel, 5, 0);
 
     }
 
@@ -121,7 +176,6 @@ public class BaseDashboardViewController implements Initializable {
             RowConstraints rc = new RowConstraints();
             rc.setPercentHeight(100.0 / i);
             Label unitLabel = new Label("Unit: " + (i + 1));
-            unitLabel.setAlignment(Pos.CENTER_LEFT);
             unitLabel.setPadding(new Insets(10));
             unitLabel.setStyle(LABEL_STYLE);
             productGridPane.add(unitLabel, 0, i + 1);
@@ -129,7 +183,7 @@ public class BaseDashboardViewController implements Initializable {
     }
 
     private void addDonorNumbersAndTypes() {
-        int numProductsDisplayed = 0;
+        int numProductsDisplayed = 1;
         int numPlasmaProducts = dao.getBasePlasmaProducts().size();
         int numPRBCProducts = dao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
@@ -137,10 +191,8 @@ public class BaseDashboardViewController implements Initializable {
             cc.setPercentWidth(100.0 / 7);
             Label donorNumberLabel = new Label(dao.getBasePlasmaProducts().get(i).getDonorNumber());
             Label productTypeLabel = new Label("Plasma");
-            donorNumberLabel.setAlignment(Pos.CENTER_LEFT);
             donorNumberLabel.setPadding(new Insets(10));
             donorNumberLabel.setStyle(LABEL_STYLE);
-            productTypeLabel.setAlignment(Pos.CENTER_LEFT);
             productTypeLabel.setPadding(new Insets(10));
             productTypeLabel.setStyle(LABEL_STYLE);
 
@@ -155,10 +207,8 @@ public class BaseDashboardViewController implements Initializable {
             cc.setPercentWidth(100.0 / 7);
             Label donorNumberLabel = new Label(dao.getBasePRBCProducts().get(i).getDonorNumber());
             Label productTypeLabel = new Label("PRBC");
-            donorNumberLabel.setAlignment(Pos.CENTER_LEFT);
             donorNumberLabel.setPadding(new Insets(10));
             donorNumberLabel.setStyle(LABEL_STYLE);
-            productTypeLabel.setAlignment(Pos.CENTER_LEFT);
             productTypeLabel.setPadding(new Insets(10));
             productTypeLabel.setStyle(LABEL_STYLE);
             productGridPane.add(donorNumberLabel, 1, numProductsDisplayed);
@@ -171,16 +221,14 @@ public class BaseDashboardViewController implements Initializable {
     }
 
     private void addExpDateAndObtainedDate() {
-        int numProductsDisplayed = 0;
+        int numProductsDisplayed = 1;
         int numPlasmaProducts = dao.getBasePlasmaProducts().size();
         int numPRBCProducts = dao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
             Label expirationDateLabel = new Label(dao.getBasePlasmaProducts().get(i).getExpirationDate().toString());
             Label obtainedDateLabel = new Label(dao.getBasePlasmaProducts().get(i).getObtainedDate().toString());
-            expirationDateLabel.setAlignment(Pos.CENTER_LEFT);
             expirationDateLabel.setPadding(new Insets(10));
             expirationDateLabel.setStyle(LABEL_STYLE);
-            obtainedDateLabel.setAlignment(Pos.CENTER_LEFT);
             obtainedDateLabel.setPadding(new Insets(10));
             obtainedDateLabel.setStyle(LABEL_STYLE);
 
@@ -192,10 +240,8 @@ public class BaseDashboardViewController implements Initializable {
         for (int i = 0; i < numPRBCProducts; i++) {
             Label expirationDateLabel = new Label(dao.getBasePRBCProducts().get(i).getExpirationDate().toString());
             Label obtainedDateLabel = new Label(dao.getBasePRBCProducts().get(i).getObtainedDate().toString());
-            expirationDateLabel.setAlignment(Pos.CENTER_LEFT);
             expirationDateLabel.setPadding(new Insets(10));
             expirationDateLabel.setStyle(LABEL_STYLE);
-            obtainedDateLabel.setAlignment(Pos.CENTER_LEFT);
             obtainedDateLabel.setPadding(new Insets(10));
             obtainedDateLabel.setStyle(LABEL_STYLE);
 
@@ -203,6 +249,41 @@ public class BaseDashboardViewController implements Initializable {
             productGridPane.add(obtainedDateLabel, 4, numProductsDisplayed);
             numProductsDisplayed++;
 
+        }
+    }
+
+    private void addStatusCircleShape() {
+        int numProductsDisplayed = 1;
+        int numPlasmaProducts = dao.getBasePlasmaProducts().size();
+        int numPRBCProducts = dao.getBasePRBCProducts().size();
+        for (int i = 0; i < numPlasmaProducts; i++) {
+            StatusCircle statusCircle = new StatusCircle();
+            if (dao.getBasePlasmaProducts().get(i).getIsExpired()) {
+                statusCircle.setFill(Color.RED);
+                statusCircle.setToolTip("Product is expired");
+            } else if (dao.getBasePlasmaProducts().get(i).getIsExpiring()) {
+                statusCircle.setFill(Color.YELLOW);
+                statusCircle.setToolTip("Product is expiring.");
+            } else {
+                statusCircle.setFill(Color.GREEN);
+            }
+            statusCircle.setRadius(15.0);
+            productGridPane.add(statusCircle, 5, numProductsDisplayed);
+            numProductsDisplayed++;
+        }
+        for (int i = 0; i < numPRBCProducts; i++) {
+            StatusCircle statusCircle = new StatusCircle();
+            if (dao.getBasePRBCProducts().get(i).getIsExpired()) {
+                statusCircle.setFill(Color.RED);
+            } else if (dao.getBasePlasmaProducts().get(i).getIsExpiring()) {
+                statusCircle.setFill(Color.YELLOW);
+            } else {
+                statusCircle.setFill(Color.GREEN);
+            }
+            statusCircle.setRadius(15.0);
+            statusCircle.setToolTip("Product is expired.");
+            productGridPane.add(statusCircle, 5, numProductsDisplayed);
+            numProductsDisplayed++;
         }
     }
 
@@ -216,7 +297,47 @@ public class BaseDashboardViewController implements Initializable {
     }
 
     private void getBaseProducts() {
-        dao.getBaseBloodProductsResultSet(this.baseId);
+        dao.setBaseBloodProductsResultSet(baseId);
+
+    }
+
+    private void getTransactionData() throws SQLException {
+        baseTransactionDAO.setBaseId(this.baseId);
+        baseTransactionDAO.setTransactions();
+        this.transactionList = baseTransactionDAO.getTransactionList();
+    }
+
+    private void adjustTableView() {
+        transactionTableView.setEditable(false);
+        transactionTableView.setStyle("-fx-alignment: CENTER");
+    }
+
+    private void addTableViewData() {
+        TableColumn<Integer, Transaction> transIdColumn = new TableColumn<>("Transaction Id");
+        TableColumn<Integer, Transaction> prodIdColumn = new TableColumn<>("Product Id");
+        TableColumn<String, Transaction> baseColumn = new TableColumn<>("Base");
+        TableColumn<String, Transaction> crewmemberColumn = new TableColumn<>("Crewmember");
+        TableColumn<String, Transaction> donorNumberColumn = new TableColumn<>("Donor Number");
+        TableColumn<String, Transaction> productTypeColumn = new TableColumn<>("Product Type");
+        TableColumn<String, Transaction> transTypeColumn = new TableColumn<>("Transaction Type");
+        TableColumn<Date, Transaction> transDateColumn = new TableColumn<>("Transaction Date/Time");
+
+        transIdColumn.setCellValueFactory(new PropertyValueFactory<>("transactionId"));
+        prodIdColumn.setCellValueFactory(new PropertyValueFactory<>("productId"));
+        baseColumn.setCellValueFactory(new PropertyValueFactory<>("base"));
+        crewmemberColumn.setCellValueFactory(new PropertyValueFactory<>("crewmember"));
+        donorNumberColumn.setCellValueFactory(new PropertyValueFactory<>("donorNumber"));
+        productTypeColumn.setCellValueFactory(new PropertyValueFactory<>("productType"));
+        transTypeColumn.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
+        transDateColumn.setCellValueFactory(new PropertyValueFactory<>("transactionDateTime"));
+        transactionTableView.getColumns().addAll(transIdColumn, prodIdColumn, baseColumn,
+                crewmemberColumn, donorNumberColumn, productTypeColumn, transTypeColumn,
+                transDateColumn);
+        
+
+        for (Transaction t : transactionList) {
+            transactionTableView.getItems().add(t);
+        }
 
     }
 

@@ -115,7 +115,7 @@ public class BaseLoginViewController implements Initializable {
      * @param event
      * @throws IOException
      */
-    public void handleBaseLoginButtonClicked(ActionEvent event) throws IOException {
+    public void handleBaseLoginButtonClicked(ActionEvent event) throws IOException, SQLException {
 
         // Ensure that a base is selected.
         if (baseComboBox.getValue() != null) {
