@@ -10,6 +10,7 @@ import com.hemaapps.hematrace.DAO.BaseProductsDAO;
 import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
 import com.hemaapps.hematrace.Model.Transaction;
 import com.hemaapps.hematrace.shapes.StatusCircle;
+import java.awt.MouseInfo;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,18 +28,19 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -57,9 +59,11 @@ public class BaseDashboardViewController implements Initializable {
     @FXML
     private GridPane productGridPane;
     @FXML
-    private VBox gridPaneVBox;
-    @FXML
     private TableView transactionTableView;
+    @FXML
+    private Circle logoutButton;
+    @FXML
+    private Circle newTransactionButton;
 
     private int numBaseProducts = 0;
     private int baseId;
@@ -76,7 +80,7 @@ public class BaseDashboardViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        setHandlers();
     }
 
     /**
@@ -103,20 +107,40 @@ public class BaseDashboardViewController implements Initializable {
         addTableViewData();
     }
 
-    public void handleLogoutButtonClick(ActionEvent event) throws IOException {
+    /**
+     * Handles the logout button click event.
+     * @param event
+     * @throws IOException 
+     */
+    public void handleLogoutButtonClick() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("../BaseLoginView.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent baseLoginViewParent = loader.load();
         Scene baseLoginView = new Scene(baseLoginViewParent);
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Stage window =(Stage)productGridPane.getScene().getWindow();
 
         window.setScene(baseLoginView);
         window.setTitle(title + "Base Login");
         window.setResizable(false);
         window.show();
     }
+    
+    public void handleCreateTransactionButtonClicked() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../CreateTransactionView.fxml"));
+        Parent createTransactionViewParent = loader.load();
+        Scene createTransactionView = new Scene(createTransactionViewParent);
+        Stage window = (Stage)productGridPane.getScene().getWindow();
+        
+        window.setScene(createTransactionView);
+        window.setTitle(title + " Create Transaction");
+        window.setResizable(false);
+        window.show();
+    }
 
+    /**
+     * Adjust the global settings for the product gridpane.
+     */
     private void adjustGridPaneForBase() {
         productGridPane.setVgap(10);
         productGridPane.setHgap(10);
@@ -143,6 +167,9 @@ public class BaseDashboardViewController implements Initializable {
         addStatusCircleShape();
     }
 
+    /**
+     * Create column headers
+     */
     private void addColumnLabels() {
         Label unitNumLabel = new Label("Unit #");
         unitNumLabel.setStyle(COL_LABEL_STYLE);
@@ -171,6 +198,9 @@ public class BaseDashboardViewController implements Initializable {
 
     }
 
+    /** Display the unit labels 
+     * 
+     */
     private void addUnitLabels() {
         for (int i = 0; i < numBaseProducts; i++) {
             RowConstraints rc = new RowConstraints();
@@ -182,6 +212,10 @@ public class BaseDashboardViewController implements Initializable {
         }
     }
 
+    /**
+     * Display the donor numbers and types of the blood products into the
+     * gridpane.
+     */
     private void addDonorNumbersAndTypes() {
         int numProductsDisplayed = 1;
         int numPlasmaProducts = dao.getBasePlasmaProducts().size();
@@ -220,6 +254,9 @@ public class BaseDashboardViewController implements Initializable {
 
     }
 
+    /**
+     * Display the expiration and obtained dates in the gridpane.
+     */
     private void addExpDateAndObtainedDate() {
         int numProductsDisplayed = 1;
         int numPlasmaProducts = dao.getBasePlasmaProducts().size();
@@ -252,6 +289,10 @@ public class BaseDashboardViewController implements Initializable {
         }
     }
 
+    /**
+     * Create a status circle for each base product and display it
+     * in the gridpane.
+     */
     private void addStatusCircleShape() {
         int numProductsDisplayed = 1;
         int numPlasmaProducts = dao.getBasePlasmaProducts().size();
@@ -287,6 +328,9 @@ public class BaseDashboardViewController implements Initializable {
         }
     }
 
+    /**
+     * Retrieve the number of base products to allow GridPane adjustment.
+     */
     private void getNumberOfBaseProducts() {
         BaseProductsDAO dao = new BaseProductsDAO();
         try {
@@ -296,22 +340,37 @@ public class BaseDashboardViewController implements Initializable {
         }
     }
 
+    /**
+     * Retrieve the current base products through the BaseProductsDAO
+     */
     private void getBaseProducts() {
         dao.setBaseBloodProductsResultSet(baseId);
 
     }
 
+    /**
+     * Retrieve the data from the database using the BaseTransactionDAO object
+     * into a list object.
+     * @throws SQLException 
+     */
     private void getTransactionData() throws SQLException {
         baseTransactionDAO.setBaseId(this.baseId);
         baseTransactionDAO.setTransactions();
         this.transactionList = baseTransactionDAO.getTransactionList();
     }
 
+    /**
+     * Modifies global settings for the BaseDashboardView transactionTableView
+     */
     private void adjustTableView() {
         transactionTableView.setEditable(false);
         transactionTableView.setStyle("-fx-alignment: CENTER");
     }
 
+    /**
+     * Adds live data to the BaseDashboardView table view.
+     * 
+     */
     private void addTableViewData() {
         TableColumn<Integer, Transaction> transIdColumn = new TableColumn<>("Transaction Id");
         TableColumn<Integer, Transaction> prodIdColumn = new TableColumn<>("Product Id");
@@ -339,6 +398,66 @@ public class BaseDashboardViewController implements Initializable {
             transactionTableView.getItems().add(t);
         }
 
+    }
+    
+    /**
+     * private method to set all of the handlers for the BaseDashboardViewController
+     */
+    private void setHandlers() {
+        // Shows a popover containing a more detailed view of 
+        // the hovered over transaction row.
+//        transactionTableView.setRowFactory(tableView -> {
+//            final TableRow<Transaction> row = new TableRow<>();
+//            
+//            TransactionPopover tPop = new TransactionPopover();
+//            row.setOnMouseEntered(MouseEvent -> {
+//                final Transaction transaction = row.getItem();
+//                    java.awt.Point p = returnMousePosition();
+//                    tPop.showPopOver(row, transaction.getDonorNumber(), p.x, p.y);
+//            });
+//            
+//            row.setOnMouseExited(MouseEvent -> {
+//                tPop.goAwayPopOver();
+//            });
+//            
+//            return row;
+//        });
+
+        // Change the shape color of the top buttons
+        logoutButton.setOnMouseEntered(MouseEvent -> {
+            logoutButton.setStyle("-fx-fill: #000");
+        });
+        logoutButton.setOnMouseExited(MouseEvent -> {
+            logoutButton.setStyle("-fx-fille: #111");
+        });
+        newTransactionButton.setOnMouseEntered(MouseEvent -> {
+            newTransactionButton.setStyle("-fx-fill: #000");
+        });
+        newTransactionButton.setOnMouseExited(MouseEvent -> {
+            newTransactionButton.setStyle("-fx-fille: #111");
+        });
+        newTransactionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent MouseEvent) {
+                try {
+                    handleCreateTransactionButtonClicked();
+                }catch (IOException ex) {
+                    Logger.getLogger(BaseDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+                
+    }
+    
+    
+    /**
+     * Utilizes java AWT library to get the current position of the mouse
+     * pointer and returns the x/y coordinates as a Point object.
+     * @return 
+     */
+    private java.awt.Point returnMousePosition() {
+    
+        return MouseInfo.getPointerInfo().getLocation();
     }
 
 }

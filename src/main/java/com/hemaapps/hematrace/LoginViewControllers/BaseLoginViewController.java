@@ -97,7 +97,6 @@ public class BaseLoginViewController implements Initializable {
         // Gotta go up one level to access resources
         FXMLLoader loader = new FXMLLoader(BaseLoginViewController.class.getResource("../AdminLoginView.fxml"));
 
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent baseDashboardViewParent = loader.load();
         Scene baseDashboardView = new Scene(baseDashboardViewParent, 640, 400);
         Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();

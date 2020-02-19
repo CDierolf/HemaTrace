@@ -25,10 +25,17 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" layoutX="863.0" prefHeight="137.0" prefWidth="528.0" style="-fx-background-color: #99773D;">
          <children>
-            <VBox alignment="CENTER" prefHeight="137.0" prefWidth="127.0" spacing="10.0" />
+            <VBox alignment="CENTER" prefHeight="137.0" prefWidth="127.0" spacing="10.0">
+               <children>
+                  <Circle fx:id="newTransactionButton" fill="WHITE" onMouseClicked="#handleLogoutButtonClick" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
+                  <Label text="Create Transaction" textAlignment="CENTER" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets bottom="20.0" />
+               </padding></VBox>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                <children>
-                  <Circle fill="WHITE" onMouseClicked="#handleLogoutButtonClick" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
+                  <Circle fx:id="logoutButton" fill="WHITE" onMouseClicked="#handleLogoutButtonClick" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
                   <Label text="Logout" textAlignment="CENTER" wrapText="true" />
                </children>
                <padding>

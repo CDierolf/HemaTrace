@@ -60,7 +60,6 @@ public class BaseDAO {
         if (baseMap.containsKey(baseName)) {
              return baseMap.get(baseName);
         } else {
-            System.out.println("FUCK");
             return 0;
         }
     }
