@@ -13,9 +13,9 @@
             <VBox prefHeight="106.0" prefWidth="228.0" spacing="10.0" stylesheets="@../../../stylesheets/AdminCSS.css">
                <children>
                   <Label text="Enter or scan your identification number" />
-                  <TextField />
+                  <TextField fx:id="crewIdTextField" />
                </children></VBox>
-            <Button mnemonicParsing="false" text="Proceed" />
+            <Button fx:id="proceedToTransactionButton" mnemonicParsing="false" onAction="#handleProceedToTransactionButtonClick" text="Proceed" />
          </children>
       </VBox>
    </children>

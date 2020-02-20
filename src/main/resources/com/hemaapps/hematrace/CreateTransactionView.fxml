@@ -16,7 +16,7 @@
                   <ComboBox fx:id="transactionTypeComboBox" prefHeight="27.0" prefWidth="231.0" />
                </children>
             </VBox>
-            <Button fx:id="createTransactionButton" mnemonicParsing="false" text="Create Transaction" />
+            <Button fx:id="createTransactionButton" mnemonicParsing="false" onAction="#handleProceedToCrewIdentViewButton" text="Create Transaction" />
          </children>
       </VBox>
    </children>

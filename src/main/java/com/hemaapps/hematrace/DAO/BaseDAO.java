@@ -22,6 +22,10 @@ import org.slf4j.LoggerFactory;
 public class BaseDAO {
 
     private static BaseDAO single_instance = null;
+    private static int baseIdForInstance;
+    private static String baseValue;
+
+    
 
     private static List<Base> bases = new ArrayList<>();
     private static HashMap<String, Integer> baseMap = new HashMap<>();
@@ -29,7 +33,7 @@ public class BaseDAO {
     private static final DatabaseService db = new DatabaseService();
     private static final Logger log = LoggerFactory.getLogger(BaseDAO.class);
 
-    private BaseDAO(){
+    private BaseDAO() {
     }
 
     public static BaseDAO getInstance() throws SQLException {
@@ -43,6 +47,21 @@ public class BaseDAO {
 
         return single_instance;
     }
+    public String getBaseValue() {
+        return baseValue;
+    }
+
+    public void setBaseValue(String baseValue) {
+        BaseDAO.baseValue = baseValue;
+    }
+    
+    public int getBaseIdForInstance() {
+        return baseIdForInstance;
+    }
+
+    public void setBaseIdForInstance(int baseIdForInstance) {
+        BaseDAO.baseIdForInstance = baseIdForInstance;
+    }
 
     public List<Base> getBases() {
         return this.bases;
@@ -55,10 +74,13 @@ public class BaseDAO {
     public HashMap<String, Integer> getBaseMap() {
         return this.baseMap;
     }
-    
+
     public int getBaseIdFromMapWithBaseName(String baseName) {
         if (baseMap.containsKey(baseName)) {
-             return baseMap.get(baseName);
+            this.setBaseIdForInstance(baseMap.get(baseName));
+            this.setBaseValue(baseName);
+            
+            return baseMap.get(baseName);
         } else {
             return 0;
         }
@@ -104,5 +126,5 @@ public class BaseDAO {
             baseNames.add(b.getName());
         }
     }
-    
+
 } //End Subclass BaseDAO

@@ -36,7 +36,11 @@ public class UserDAO {
                 dataTypes.toArray(new String[dataTypes.size()]));
 
         return loggedin;
-
+    }
+    
+    //TODO
+    public static boolean validateCrewUser(String userId) {
+        return true;
     }
 
 } //End Subclass UserDAO

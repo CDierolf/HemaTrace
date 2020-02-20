@@ -130,10 +130,10 @@ public class BaseDashboardViewController implements Initializable {
         loader.setLocation(getClass().getResource("../CreateTransactionView.fxml"));
         Parent createTransactionViewParent = loader.load();
         Scene createTransactionView = new Scene(createTransactionViewParent);
-        Stage window = (Stage)productGridPane.getScene().getWindow();
+        Stage window = new Stage();
         
         window.setScene(createTransactionView);
-        window.setTitle(title + " Create Transaction");
+        window.setTitle(title + "- " + this.baseLocation + " -Create Transaction");
         window.setResizable(false);
         window.show();
     }

@@ -2,6 +2,7 @@ package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.Model.Transaction;
+import com.hemaapps.hematrace.Model.TransactionType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,6 +28,15 @@ public class BaseTransactionDAO {
     private int baseId;
     private ResultSet transactionResultSet;
     private ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
+    private List<TransactionType> transactionTypeList = new ArrayList<>();
+
+    public List<TransactionType> getTransactionTypeList() throws SQLException {
+        if (transactionTypeList.size() <= 0) {
+            retrieveTransactionTypes();
+        }
+        return transactionTypeList;
+    }
+
     
     public void setTransactions() throws SQLException {
         this.getTransactions(this.getBaseId());
@@ -85,6 +95,7 @@ public class BaseTransactionDAO {
     private void parseTransactionResultSet() throws SQLException {
         ResultSet rs = this.getTransactionResultSet();
         if (rs != null) {
+            log.info("Parsing transaction resultset.");
             try {
                 while (rs.next()) {
                     Transaction transaction = new Transaction();
@@ -110,6 +121,38 @@ public class BaseTransactionDAO {
         log.info("transactions retrieved for baseID: " + getBaseId()
                 + ". " + getTransactionListSize() + " transactions retrieved.");
 
+    }
+    
+    private void retrieveTransactionTypes() throws SQLException {
+        DatabaseService db = new DatabaseService();
+        db.init();
+        String query = "{call [sp_retrieveTransactionTypes] }";
+        ResultSet rs = null;
+
+        try {
+            rs = db.callableStatementRs(query);
+        } catch (SQLException ex) {
+            log.error("An error occurred attempting to retrieve"
+                    + "the transactiontypes from the database.: ", ex);
+        }
+        parseTransactionTypeResultSet(rs);
+    }
+    
+    private void parseTransactionTypeResultSet(ResultSet rs) throws SQLException {
+        if (rs != null) {
+            log.info("Parsing transaction type result set.");
+            while (rs.next()) {
+                TransactionType transactionType = new TransactionType();
+                transactionType.setTransactionTypeId(rs.getInt("transaction_type_id"));
+                transactionType.setTransactionType(rs.getString("transaction_type"));
+                transactionType.setTransactionDescription(rs.getString("description"));
+                transactionTypeList.add(transactionType);
+            }
+            log.info("Transaction type list retrieved successfully: " + transactionTypeList.size() + " items retrieved.");
+        } else {
+            log.error("Unable to parse the transaction type resultset.");
+        }
+        
     }
 
 } //End Subclass BaseTransactionDAO

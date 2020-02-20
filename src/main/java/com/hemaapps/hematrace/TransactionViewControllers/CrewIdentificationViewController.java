@@ -1,15 +1,36 @@
 package com.hemaapps.hematrace.TransactionViewControllers;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
 /** 
- * @Course: SDEV 350 ~ Java Programming II
- * @Author Name: Christopher K. Dierolf
- * @Assignment Name: com.hemaapps.hematrace.TransactionViewControllers
- * @Date: Feb 18, 2020
- * @Subclass CrewIdentificationViewController Description: 
  */
 //Imports
 
 //Begin Subclass CrewIdentificationViewController
-public class CrewIdentificationViewController {
+public class CrewIdentificationViewController implements Initializable{
+
+    @FXML
+    private TextField crewIdTextField;
+    @FXML
+    private Button proceedToTransactionButton;
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        
+    }
+    
+    public void handleProceedToTransactionButtonClick() {
+        
+    }
+    
+    private boolean validateCrewId() {
+        if (crewIdTextField.getText().isEmpty() || crewIdTextField.getText().isBlank()) {
+            return false;
+        }
+    }
 
 } //End Subclass CrewIdentificationViewController

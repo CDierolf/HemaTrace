@@ -1,21 +1,24 @@
 package com.hemaapps.hematrace.TransactionViewControllers;
 
+import com.hemaapps.hematrace.DAO.BaseDAO;
+import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
+import com.hemaapps.hematrace.Model.TransactionType;
 import com.hemaapps.hematrace.utilities.Alerts;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
+import java.util.logging.Level;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,56 +38,76 @@ public class CreateTransactionViewController implements Initializable{
     private static final Logger log = LoggerFactory.getLogger(CreateTransactionViewController.class);
     private static Alerts alerts;
 
+    private BaseDAO baseDAO;
     private int baseId;
+    private String baseValue;
     
     @FXML
     private ComboBox transactionTypeComboBox;
     @FXML
     private Button createTransactionButton;
     
+    private List<TransactionType> transactionTypeList = new ArrayList<>();
+    
   
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        try {
+            baseDAO = BaseDAO.getInstance();
+            baseId = baseDAO.getBaseIdForInstance();
+            baseValue = baseDAO.getBaseValue();
+            
+        } catch (SQLException ex) {
+            log.error("Unable to get the BaseDAO instance in CreateTransactionViewController.");
+        }
+        populateTransactionTypeComboBox();
+    }
+    
+    private void populateTransactionTypeComboBox() {
+        BaseTransactionDAO baseTransactionDAO = new BaseTransactionDAO();
+        try {
+            transactionTypeList = baseTransactionDAO.getTransactionTypeList();
+        } catch (SQLException ex) {
+            log.error("Unable to retrieve the transaction types list.");
+        }
+        
+        log.info("Populating transaction type combobox.");
+        for (TransactionType tt : transactionTypeList) {
+            System.out.println(tt.getTransactionType());
+            transactionTypeComboBox.getItems().add(tt.getTransactionType());
+        }
     }
     
     
-//    public void handleCreateTransactionButton(ActionEvent event) throws IOException {
-//        // Ensure that a base is selected.
-//        if (transactionTypeComboBox.getValue() != null) {
-//            String baseValue = transactionTypeComboBox.getValue().toString();
-//
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("../CrewIdentification.fxml"));
-//            Parent baseDashboardView = loader.load();
-//            Scene baseDashboardScene = new Scene(baseDashboardView);
-//
-//            // Dashboard View Controller
-//            BaseDashboardViewController controller = loader.getController();
-//            // Pass data into the controller
-//            controller.initData(baseComboBox.getValue().toString());
-//
-//            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//
-//            double width = 940;
-//            double height = 1391;
-//            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-//            window.setX((screenBounds.getWidth() - width) / 4);
-//            window.setY((screenBounds.getHeight() - height) / 2);
-//
-//            window.setScene(baseDashboardScene);
-//            window.setTitle(title + baseValue + " Dashboard");
-//            window.setResizable(false);
-//            window.show();
-//
-//        } else {
-//            alerts = new Alerts(Alert.AlertType.ERROR, "Base Selection is Blank",
-//                    "Please select a base to login.", "In order to proceed, please ensure"
-//                    + " that a base is selected.");
-//            alerts.showGenericAlert();
-//            baseComboBox.requestFocus();
-//        }
     
+    public void handleProceedToCrewIdentViewButton() throws IOException {
+        // Ensure that a base is selected.
+        if (transactionTypeComboBox.getValue() != null) {
+            String baseValue = transactionTypeComboBox.getValue().toString();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("../CrewIdentificationView.fxml"));
+            Parent crewIdentificationView = loader.load();
+            Scene crewIdentificationScene = new Scene(crewIdentificationView);
+            CrewIdentificationViewController controller = loader.getController();
+            // TODO Need to pass transaction type to crew ident and then on the transaction view
+            
+            Stage window = (Stage)this.transactionTypeComboBox.getScene().getWindow();
+
+            window.setScene(crewIdentificationScene);
+            window.setTitle("HemaTrace - " + baseValue + " - Crew Identification");
+            window.setResizable(false);
+            window.show();
+
+        } else {
+            alerts = new Alerts(Alert.AlertType.ERROR, "Transaction Type is Blank",
+                    "Please select a transaction type to proceed.", "In order to proceed, please ensure"
+                    + " that a transaction type is selected.");
+            alerts.showGenericAlert();
+            transactionTypeComboBox.requestFocus();
+        }
+    }
     
     
     
