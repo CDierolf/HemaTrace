@@ -120,9 +120,7 @@ public class DatabaseService {
         CallableStatement cs = null;
         int returnValue = 0;
         try {
-            if(connection == null)
-                connection = connectionPool.getConnection();
-
+            connection = connectionPool.getConnection();
             cs = connection.prepareCall(query);
             // This section sets up parameters for the query from the arguments            
             for (int i = 0; i < inputs.length; i++) {

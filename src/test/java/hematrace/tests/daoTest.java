@@ -2,6 +2,7 @@ package hematrace.tests;
 
 import com.hemaapps.hematrace.DAO.BaseProductsDAO;
 import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
+import com.hemaapps.hematrace.DAO.UserDAO;
 import org.junit.jupiter.api.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 public class daoTest {
     private BaseProductsDAO pDao = new BaseProductsDAO();
     private BaseTransactionDAO tDao = new BaseTransactionDAO();
+    private UserDAO uDao = new UserDAO();
     @Test
     public void testBaseProductDAOService() {
         pDao.setBaseBloodProductsResultSet(2);
@@ -31,6 +33,18 @@ public class daoTest {
         tDao.setBaseId(2);
         tDao.setTransactions();
         assert(tDao.getTransactionResultSet() != null);
+    }
+    
+    @Test //valid user = true by crew id
+    public void testUserDAOServiceTrue() throws SQLException {
+        
+        assert(uDao.validateCrewUser("1023") == true);
+       
+    }
+    
+    @Test // valid user = false by crew id
+    public void testUserDAOServiceFalse() throws SQLException {
+        assert(uDao.validateCrewUser("1022") == false);
     }
 
 } //End Subclass daoTest

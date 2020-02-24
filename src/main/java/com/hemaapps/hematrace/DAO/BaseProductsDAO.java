@@ -5,6 +5,7 @@ import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -147,7 +148,7 @@ public class BaseProductsDAO {
                 + basePlasmaProducts.size() + " products retrieved.");
     }
 
-    public int getCurrentNumberOfProductsForBase(int base) throws SQLException {
+    public int getCurrentNumberOfProductsForBase(int base) throws SQLException, ParseException {
         List<String> inputs = new ArrayList<>();
         List<String> inputDataTypes = new ArrayList<>();
         DatabaseService db = new DatabaseService();

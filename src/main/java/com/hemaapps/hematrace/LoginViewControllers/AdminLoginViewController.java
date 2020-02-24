@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -47,7 +48,7 @@ public class AdminLoginViewController implements Initializable {
         
     }
     
-    public void handleLoginButtonClicked(ActionEvent event) throws SQLException {
+    public void handleLoginButtonClicked(ActionEvent event) throws SQLException, ParseException {
         if (userIsAuthorized()) {
             loadAdminDashboard(event);
         }
@@ -59,7 +60,7 @@ public class AdminLoginViewController implements Initializable {
         Platform.exit();
     }
     
-    private boolean userIsAuthorized() throws SQLException {
+    private boolean userIsAuthorized() throws SQLException, ParseException {
         
         boolean userIsAuthenticated;
         String userName = userNameTextField.getText();

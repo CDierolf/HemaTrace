@@ -14,6 +14,7 @@ import java.awt.MouseInfo;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -89,7 +90,7 @@ public class BaseDashboardViewController implements Initializable {
      *
      * @param baseLocation
      */
-    public void initData(String baseLocation) throws SQLException {
+    public void initData(String baseLocation) throws SQLException, ParseException {
 
         try {
             baseDAO = BaseDAO.getInstance();
@@ -331,7 +332,7 @@ public class BaseDashboardViewController implements Initializable {
     /**
      * Retrieve the number of base products to allow GridPane adjustment.
      */
-    private void getNumberOfBaseProducts() {
+    private void getNumberOfBaseProducts() throws ParseException {
         BaseProductsDAO dao = new BaseProductsDAO();
         try {
             this.numBaseProducts = dao.getCurrentNumberOfProductsForBase(2);
