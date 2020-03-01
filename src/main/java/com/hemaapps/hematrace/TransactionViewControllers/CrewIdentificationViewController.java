@@ -2,6 +2,8 @@ package com.hemaapps.hematrace.TransactionViewControllers;
 
 import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.UserDAO;
+import com.hemaapps.hematrace.Model.TransactionType;
+import com.hemaapps.hematrace.Model.User;
 import com.hemaapps.hematrace.utilities.Alerts;
 import java.io.IOException;
 import java.net.URL;
@@ -32,6 +34,8 @@ public class CrewIdentificationViewController implements Initializable{
     private static Alerts alerts;
     private UserDAO uDao;
     private BaseDAO baseDao;
+    private User user;
+    private TransactionType tType;
 
     @FXML
     private TextField crewIdTextField;
@@ -47,6 +51,10 @@ public class CrewIdentificationViewController implements Initializable{
         }
     }
     
+    public void setTransactionType(TransactionType tType) {
+        this.tType = tType;
+    }
+    
     public void handleProceedToTransactionButtonClick() throws SQLException, IOException, ParseException {
         
         if (validateCrewId()) {
@@ -57,6 +65,8 @@ public class CrewIdentificationViewController implements Initializable{
             Scene transactionScene = new Scene(transactionView);
             TransactionViewController controller = loader.getController();
             // TODO Need to pass transaction type to crew ident and then on the transaction view
+            controller.setUser(user);
+            controller.setTransactionType(tType);
             
             Stage window = (Stage) this.crewIdTextField.getScene().getWindow();
             window.setScene(transactionScene);
@@ -91,6 +101,7 @@ public class CrewIdentificationViewController implements Initializable{
         }
         
         if (uDao.validateCrewUser(crewId)) {
+            user = new User(crewId);
             validUser = true;
         } else {
             validUser = false;

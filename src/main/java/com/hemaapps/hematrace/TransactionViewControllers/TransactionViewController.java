@@ -2,6 +2,10 @@ package com.hemaapps.hematrace.TransactionViewControllers;
 
 import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.BaseProductsDAO;
+import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
+import com.hemaapps.hematrace.Model.Transaction;
+import com.hemaapps.hematrace.Model.TransactionType;
+import com.hemaapps.hematrace.Model.User;
 import com.hemaapps.hematrace.controls.UnitTransactionVBox;
 import com.hemaapps.hematrace.utilities.Alerts;
 import com.hemaapps.hematrace.utilities.BloodProductValidation;
@@ -43,9 +47,12 @@ public class TransactionViewController implements Initializable {
 
     private static BaseDAO baseDao;
     private static BaseProductsDAO baseProductDao;
+    private static BaseTransactionDAO baseTransactionDao;
     private BloodProductValidation validation;
     private List<String> donorNumberList = new ArrayList<>();
     private boolean invalidSet = true;
+    private User user;
+    private TransactionType tType;
 
     @FXML
     private VBox checkOutVBox;
@@ -93,6 +100,16 @@ public class TransactionViewController implements Initializable {
         }
     }
     
+    public void setUser(User user) {
+        this.user = user;
+        System.out.println("USER: " + user.getUserId());
+    }
+    
+    public void setTransactionType(TransactionType tType) {
+        this.tType = tType;
+        System.out.println("TRANSACTIONT YPE: " + tType.getTransactionType());
+    }
+    
     public void handleCheckInButtonClicked() {
         System.out.println(invalidSet);
     }
@@ -101,6 +118,20 @@ public class TransactionViewController implements Initializable {
         Stage stage = (Stage)this.commitTransactionButton.getScene().getWindow();
         log.info("Transaction cancelled by user.");
         stage.close();
+    }
+    
+    public void handleCommitTransactionButtonClicked() {
+        Transaction transaction = null;
+        for (String s : donorNumberList) {
+            transaction = new Transaction();
+            transaction.setBase(Integer.toString(baseDao.getBaseIdForInstance()));
+            transaction.setCrewmember(user.getUserId());
+            transaction.setDonorNumber(s);
+            transaction.setTransactionType(tType.getTransactionType());
+        }
+        baseTransactionDao.insertTransaction(transaction);
+        
+        
     }
 
     private void handleListeners() {
@@ -117,7 +148,9 @@ public class TransactionViewController implements Initializable {
                             if (valid) {
                                 String dn = transactionVBoxList.get(index.get()).getUnitTransactionTextField().getText();
                                 if (!donorNumberList.contains(dn)) {
-                                    donorNumberList.add(dn);
+                                    if (donorNumberList.size() < baseProductDao.getMaxNumProducts()) {
+                                        donorNumberList.add(dn);
+                                    }
                                     setNormal(index.get());
                                     transactionVBoxList.get(index.get() + 1).getUnitTransactionTextField().requestFocus();
                                     invalidSet = false;
@@ -180,4 +213,5 @@ public class TransactionViewController implements Initializable {
         transactionVBoxList.get(index).getInvalidLabel().setVisible(false);
         transactionVBoxList.get(index).getUnitTransactionTextField().setStyle(null);
     }
+    
 } //End Subclass TransactionViewController

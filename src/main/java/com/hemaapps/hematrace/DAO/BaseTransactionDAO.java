@@ -155,7 +155,7 @@ public class BaseTransactionDAO {
         
     }
     
-    private void insertTransaction(Transaction transaction) {
+    public void insertTransaction(Transaction transaction) {
         
     }
 

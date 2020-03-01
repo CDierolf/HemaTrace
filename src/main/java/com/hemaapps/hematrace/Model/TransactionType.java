@@ -15,6 +15,12 @@ public class TransactionType {
     private int transactionTypeId;
     private String transactionType;
     private String transactionDescription;
+    
+    public TransactionType() {}
+    
+    public TransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
 
     public int getTransactionTypeId() {
         return transactionTypeId;

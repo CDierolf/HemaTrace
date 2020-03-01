@@ -91,7 +91,8 @@ public class CreateTransactionViewController implements Initializable{
             Parent crewIdentificationView = loader.load();
             Scene crewIdentificationScene = new Scene(crewIdentificationView);
             CrewIdentificationViewController controller = loader.getController();
-            // TODO Need to pass transaction type to crew ident and then on the transaction view
+            TransactionType tType = new TransactionType(this.transactionTypeComboBox.getValue().toString());
+            controller.setTransactionType(tType);
             
             Stage window = (Stage)this.transactionTypeComboBox.getScene().getWindow();
 
