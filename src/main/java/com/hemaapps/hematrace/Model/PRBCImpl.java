@@ -12,7 +12,7 @@ import java.util.Date;
 //Imports
 
 //Begin Subclass PRBCImpl
-public class PRBCImpl extends BloodProductImpl {
+public class PRBCImpl implements BloodProduct {
     
     private int productId;
     private int baseFkId;

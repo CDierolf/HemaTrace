@@ -6,6 +6,7 @@ import com.hemaapps.hematrace.DAO.UserDAO;
 import org.junit.jupiter.api.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 /** 
  * @Course: SDEV 350 ~ Java Programming II
@@ -18,11 +19,12 @@ import java.sql.SQLException;
 
 //Begin Subclass daoTest
 public class daoTest {
-    private BaseProductsDAO pDao = new BaseProductsDAO();
+    private BaseProductsDAO pDao;
     private BaseTransactionDAO tDao = new BaseTransactionDAO();
     private UserDAO uDao = new UserDAO();
     @Test
-    public void testBaseProductDAOService() {
+    public void testBaseProductDAOService() throws SQLException{
+        pDao = BaseProductsDAO.getInstance();
         pDao.setBaseBloodProductsResultSet(2);
         ResultSet rs = pDao.getResultSet();
         assert(rs != null);
@@ -36,14 +38,14 @@ public class daoTest {
     }
     
     @Test //valid user = true by crew id
-    public void testUserDAOServiceTrue() throws SQLException {
+    public void testUserDAOServiceTrue() throws SQLException, ParseException {
         
         assert(uDao.validateCrewUser("1023") == true);
        
     }
     
     @Test // valid user = false by crew id
-    public void testUserDAOServiceFalse() throws SQLException {
+    public void testUserDAOServiceFalse() throws SQLException, ParseException {
         assert(uDao.validateCrewUser("1022") == false);
     }
 

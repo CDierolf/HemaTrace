@@ -1,6 +1,8 @@
 package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
+import com.hemaapps.hematrace.Model.BloodProduct;
+import com.hemaapps.hematrace.Model.BloodProductImpl;
 import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;
@@ -16,29 +18,40 @@ import org.slf4j.LoggerFactory;
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 4, 2020
- * @Subclass BaseProductsDAO Description:
+ * @Subclass BaseProductsDAO Description: Singleton BaseProductsDAO class
  */
 //Imports
 //Begin Subclass BaseProductsDAO
 public class BaseProductsDAO {
 
-    private final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
     
+    private static BaseProductsDAO single_instance = null;
     private int baseId;
     private int maxNumProducts;
     private ResultSet resultSet;
     private List<PlasmaImpl> basePlasmaProducts = new ArrayList<>();
     private List<PRBCImpl> basePRBCProducts = new ArrayList<>();
-    private List<Object> baseProducts = new ArrayList<>();
-
-    public List<Object> getBaseProducts() {
-        baseProducts.add(basePlasmaProducts);
-        baseProducts.add(basePRBCProducts);
-        return baseProducts;
+    //private List<BloodProduct> baseProducts = new ArrayList<>();
+    
+    private BaseProductsDAO() {}
+    
+    public static BaseProductsDAO getSingle_instance() {
+        return single_instance;
     }
 
-    public void setBaseProducts(List<Object> baseProducts) {
-        this.baseProducts = baseProducts;
+    public static void setSingle_instance(BaseProductsDAO single_instance) {
+        BaseProductsDAO.single_instance = single_instance;
+    }
+    
+    public static BaseProductsDAO getInstance() throws SQLException {
+        if (single_instance == null) {
+            log.info("BaseProductsDAO singleton initialized.");
+            single_instance = new BaseProductsDAO();
+            
+        }
+
+        return single_instance;
     }
 
     public void setBaseId(int baseId) {
@@ -101,6 +114,8 @@ public class BaseProductsDAO {
     }
 
     private void parseBaseProductResultSet() {
+        basePlasmaProducts.clear();
+        basePRBCProducts.clear();
         ResultSet rs = this.getResultSet();
         if (rs != null) {
             try {
@@ -136,6 +151,9 @@ public class BaseProductsDAO {
                         basePRBCProducts.add(bloodProduct);
                     }
                 }
+                
+                maxNumProducts += basePRBCProducts.size();
+                maxNumProducts += basePlasmaProducts.size();
             } catch (SQLException ex) {
                 log.error("ERROR: ", ex);
             }
@@ -165,4 +183,5 @@ public class BaseProductsDAO {
         return numProductsForBase;
 
     }
+    
 } //End Subclass BaseProductsDAO

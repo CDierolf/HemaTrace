@@ -71,7 +71,7 @@ public class BaseDashboardViewController implements Initializable {
     private ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
 
     String baseLocation = "";
-    private final BaseProductsDAO dao = new BaseProductsDAO();
+    private BaseProductsDAO baseProductsDao;
     private final BaseTransactionDAO baseTransactionDAO = new BaseTransactionDAO();
     private BaseDAO baseDAO;
 
@@ -81,6 +81,11 @@ public class BaseDashboardViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        try {
+            baseProductsDao = BaseProductsDAO.getInstance();
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         setHandlers();
     }
 
@@ -94,6 +99,7 @@ public class BaseDashboardViewController implements Initializable {
 
         try {
             baseDAO = BaseDAO.getInstance();
+            baseDAO.setBaseValue(baseLocation);
         } catch (SQLException ex) {
             Logger.getLogger(BaseDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -219,12 +225,12 @@ public class BaseDashboardViewController implements Initializable {
      */
     private void addDonorNumbersAndTypes() {
         int numProductsDisplayed = 1;
-        int numPlasmaProducts = dao.getBasePlasmaProducts().size();
-        int numPRBCProducts = dao.getBasePRBCProducts().size();
+        int numPlasmaProducts = baseProductsDao.getBasePlasmaProducts().size();
+        int numPRBCProducts = baseProductsDao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
             ColumnConstraints cc = new ColumnConstraints();
             cc.setPercentWidth(100.0 / 7);
-            Label donorNumberLabel = new Label(dao.getBasePlasmaProducts().get(i).getDonorNumber());
+            Label donorNumberLabel = new Label(baseProductsDao.getBasePlasmaProducts().get(i).getDonorNumber());
             Label productTypeLabel = new Label("Plasma");
             donorNumberLabel.setPadding(new Insets(10));
             donorNumberLabel.setStyle(LABEL_STYLE);
@@ -240,7 +246,7 @@ public class BaseDashboardViewController implements Initializable {
         for (int i = 0; i < numPRBCProducts; i++) {
             ColumnConstraints cc = new ColumnConstraints();
             cc.setPercentWidth(100.0 / 7);
-            Label donorNumberLabel = new Label(dao.getBasePRBCProducts().get(i).getDonorNumber());
+            Label donorNumberLabel = new Label(baseProductsDao.getBasePRBCProducts().get(i).getDonorNumber());
             Label productTypeLabel = new Label("PRBC");
             donorNumberLabel.setPadding(new Insets(10));
             donorNumberLabel.setStyle(LABEL_STYLE);
@@ -250,9 +256,6 @@ public class BaseDashboardViewController implements Initializable {
             productGridPane.add(productTypeLabel, 2, numProductsDisplayed);
             numProductsDisplayed++;
         }
-
-        System.out.println(numProductsDisplayed);
-
     }
 
     /**
@@ -260,11 +263,11 @@ public class BaseDashboardViewController implements Initializable {
      */
     private void addExpDateAndObtainedDate() {
         int numProductsDisplayed = 1;
-        int numPlasmaProducts = dao.getBasePlasmaProducts().size();
-        int numPRBCProducts = dao.getBasePRBCProducts().size();
+        int numPlasmaProducts = baseProductsDao.getBasePlasmaProducts().size();
+        int numPRBCProducts = baseProductsDao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
-            Label expirationDateLabel = new Label(dao.getBasePlasmaProducts().get(i).getExpirationDate().toString());
-            Label obtainedDateLabel = new Label(dao.getBasePlasmaProducts().get(i).getObtainedDate().toString());
+            Label expirationDateLabel = new Label(baseProductsDao.getBasePlasmaProducts().get(i).getExpirationDate().toString());
+            Label obtainedDateLabel = new Label(baseProductsDao.getBasePlasmaProducts().get(i).getObtainedDate().toString());
             expirationDateLabel.setPadding(new Insets(10));
             expirationDateLabel.setStyle(LABEL_STYLE);
             obtainedDateLabel.setPadding(new Insets(10));
@@ -276,8 +279,8 @@ public class BaseDashboardViewController implements Initializable {
 
         }
         for (int i = 0; i < numPRBCProducts; i++) {
-            Label expirationDateLabel = new Label(dao.getBasePRBCProducts().get(i).getExpirationDate().toString());
-            Label obtainedDateLabel = new Label(dao.getBasePRBCProducts().get(i).getObtainedDate().toString());
+            Label expirationDateLabel = new Label(baseProductsDao.getBasePRBCProducts().get(i).getExpirationDate().toString());
+            Label obtainedDateLabel = new Label(baseProductsDao.getBasePRBCProducts().get(i).getObtainedDate().toString());
             expirationDateLabel.setPadding(new Insets(10));
             expirationDateLabel.setStyle(LABEL_STYLE);
             obtainedDateLabel.setPadding(new Insets(10));
@@ -296,14 +299,14 @@ public class BaseDashboardViewController implements Initializable {
      */
     private void addStatusCircleShape() {
         int numProductsDisplayed = 1;
-        int numPlasmaProducts = dao.getBasePlasmaProducts().size();
-        int numPRBCProducts = dao.getBasePRBCProducts().size();
+        int numPlasmaProducts = baseProductsDao.getBasePlasmaProducts().size();
+        int numPRBCProducts = baseProductsDao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
             StatusCircle statusCircle = new StatusCircle();
-            if (dao.getBasePlasmaProducts().get(i).getIsExpired()) {
+            if (baseProductsDao.getBasePlasmaProducts().get(i).getIsExpired()) {
                 statusCircle.setFill(Color.RED);
                 statusCircle.setToolTip("Product is expired");
-            } else if (dao.getBasePlasmaProducts().get(i).getIsExpiring()) {
+            } else if (baseProductsDao.getBasePlasmaProducts().get(i).getIsExpiring()) {
                 statusCircle.setFill(Color.YELLOW);
                 statusCircle.setToolTip("Product is expiring.");
             } else {
@@ -315,9 +318,9 @@ public class BaseDashboardViewController implements Initializable {
         }
         for (int i = 0; i < numPRBCProducts; i++) {
             StatusCircle statusCircle = new StatusCircle();
-            if (dao.getBasePRBCProducts().get(i).getIsExpired()) {
+            if (baseProductsDao.getBasePRBCProducts().get(i).getIsExpired()) {
                 statusCircle.setFill(Color.RED);
-            } else if (dao.getBasePlasmaProducts().get(i).getIsExpiring()) {
+            } else if (baseProductsDao.getBasePRBCProducts().get(i).getIsExpiring()) {
                 statusCircle.setFill(Color.YELLOW);
             } else {
                 statusCircle.setFill(Color.GREEN);
@@ -333,9 +336,9 @@ public class BaseDashboardViewController implements Initializable {
      * Retrieve the number of base products to allow GridPane adjustment.
      */
     private void getNumberOfBaseProducts() throws ParseException {
-        BaseProductsDAO dao = new BaseProductsDAO();
         try {
-            this.numBaseProducts = dao.getCurrentNumberOfProductsForBase(2);
+            this.numBaseProducts = baseProductsDao.getCurrentNumberOfProductsForBase(2);
+            this.baseDAO.setNumBaseProducts(this.numBaseProducts);
         } catch (SQLException ex) {
             Logger.getLogger(BaseDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -345,7 +348,7 @@ public class BaseDashboardViewController implements Initializable {
      * Retrieve the current base products through the BaseProductsDAO
      */
     private void getBaseProducts() {
-        dao.setBaseBloodProductsResultSet(baseId);
+        baseProductsDao.setBaseBloodProductsResultSet(baseId);
 
     }
 

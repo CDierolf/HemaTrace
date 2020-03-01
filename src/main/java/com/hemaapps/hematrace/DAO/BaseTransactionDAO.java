@@ -154,5 +154,9 @@ public class BaseTransactionDAO {
         }
         
     }
+    
+    private void insertTransaction(Transaction transaction) {
+        
+    }
 
 } //End Subclass BaseTransactionDAO

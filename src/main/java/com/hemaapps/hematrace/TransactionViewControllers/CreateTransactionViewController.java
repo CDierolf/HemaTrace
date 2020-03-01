@@ -57,6 +57,7 @@ public class CreateTransactionViewController implements Initializable{
             baseDAO = BaseDAO.getInstance();
             baseId = baseDAO.getBaseIdForInstance();
             baseValue = baseDAO.getBaseValue();
+            createTransactionButton.setDefaultButton(true);
             
         } catch (SQLException ex) {
             log.error("Unable to get the BaseDAO instance in CreateTransactionViewController.");
@@ -74,7 +75,6 @@ public class CreateTransactionViewController implements Initializable{
         
         log.info("Populating transaction type combobox.");
         for (TransactionType tt : transactionTypeList) {
-            System.out.println(tt.getTransactionType());
             transactionTypeComboBox.getItems().add(tt.getTransactionType());
         }
     }

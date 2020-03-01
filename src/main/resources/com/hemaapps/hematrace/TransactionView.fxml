@@ -7,32 +7,43 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="969.0" style="-fx-background-color: #99773D#99773D;" stylesheets="@../../../stylesheets/AdminCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="969.0" style="-fx-background-color: #99773D#99773D;" stylesheets="@../../../stylesheets/AdminCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemaapps.hematrace.TransactionViewControllers.TransactionViewController">
    <left>
-      <VBox fx:id="checkInVBox" alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" spacing="15.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
+      <VBox fx:id="checkOutVBox" alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" spacing="5.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
          <padding>
-            <Insets top="50.0" />
+            <Insets top="10.0" />
          </padding>
          <children>
             <VBox alignment="CENTER" prefHeight="58.0" prefWidth="487.0" spacing="5.0">
                <children>
-                  <Label prefWidth="250.0" text="Transaction Date/Time" />
-                  <TextField maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" />
+                  <Label alignment="CENTER" prefWidth="250.0" text="Transaction Date/Time" />
+                  <TextField fx:id="transactionDateTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" />
                </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </VBox>
-            <VBox alignment="CENTER" prefHeight="58.0" prefWidth="487.0" spacing="5.0" />
          </children>
       </VBox>
    </left>
    <right>
-      <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
+      <VBox fx:id="checkInVBox" alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="checkInButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="127.0" text="Check In" />
+            <Button fx:id="checkInButton" mnemonicParsing="false" onAction="#handleCheckInButtonClicked" prefHeight="27.0" prefWidth="127.0" text="Check In" />
          </children>
       </VBox>
    </right>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
+   <bottom>
+      <Button fx:id="cancelTransaction" mnemonicParsing="false" onAction="#handleCancelTransactionButtonClicked" text="Cancel Transaction" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </Button>
+   </bottom>
 </BorderPane>

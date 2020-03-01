@@ -1,5 +1,6 @@
 package com.hemaapps.hematrace.TransactionViewControllers;
 
+import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.UserDAO;
 import com.hemaapps.hematrace.utilities.Alerts;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +30,8 @@ public class CrewIdentificationViewController implements Initializable{
     
     private static final Logger log = LoggerFactory.getLogger(CrewIdentificationViewController.class);
     private static Alerts alerts;
-    private static UserDAO uDao;
+    private UserDAO uDao;
+    private BaseDAO baseDao;
 
     @FXML
     private TextField crewIdTextField;
@@ -36,12 +39,18 @@ public class CrewIdentificationViewController implements Initializable{
     private Button proceedToTransactionButton;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        try {
+            baseDao = BaseDAO.getInstance();
+            proceedToTransactionButton.setDefaultButton(true);
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(CrewIdentificationViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void handleProceedToTransactionButtonClick() throws SQLException, IOException, ParseException {
         
         if (validateCrewId()) {
+            System.out.println(validateCrewId());
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../TransactionView.fxml"));
             Parent transactionView = loader.load();
@@ -51,9 +60,14 @@ public class CrewIdentificationViewController implements Initializable{
             
             Stage window = (Stage) this.crewIdTextField.getScene().getWindow();
             window.setScene(transactionScene);
-            window.setTitle("HemaTrace - " + " - Crew Identification");
+            window.setTitle("HemaTrace - " + baseDao.getBaseValue() + " - Crew Identification");
             window.setResizable(false);
             window.show();
+        } else {
+            alerts = new Alerts(Alert.AlertType.ERROR, "Identification is not valid or user is not authorized.",
+                    "You must provide a valid crew id.", "In order to proceed, please ensure"
+                    + " a valid crew id is provided.");
+            alerts.showGenericAlert();
         }
         
         

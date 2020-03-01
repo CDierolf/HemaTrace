@@ -24,9 +24,16 @@ public class BaseDAO {
     private static BaseDAO single_instance = null;
     private static int baseIdForInstance;
     private static String baseValue;
+    private static int numBaseProducts;
 
+    public static BaseDAO getSingle_instance() {
+        return single_instance;
+    }
+
+    public static void setSingle_instance(BaseDAO single_instance) {
+        BaseDAO.single_instance = single_instance;
+    }
     
-
     private static List<Base> bases = new ArrayList<>();
     private static HashMap<String, Integer> baseMap = new HashMap<>();
     private static List<String> baseNames = new ArrayList<>();
@@ -78,8 +85,6 @@ public class BaseDAO {
     public int getBaseIdFromMapWithBaseName(String baseName) {
         if (baseMap.containsKey(baseName)) {
             this.setBaseIdForInstance(baseMap.get(baseName));
-            this.setBaseValue(baseName);
-            
             return baseMap.get(baseName);
         } else {
             return 0;
@@ -126,5 +131,16 @@ public class BaseDAO {
             baseNames.add(b.getName());
         }
     }
+    
+    public int getNumBaseProducts() {
+        return numBaseProducts;
+    }
+
+    public void setNumBaseProducts(int numBaseProducts) {
+        BaseDAO.numBaseProducts = numBaseProducts;
+    }
+
+    
+
 
 } //End Subclass BaseDAO
