@@ -106,7 +106,7 @@ public class BaseDashboardViewController implements Initializable {
         }
         this.baseLocation = baseLocation;
         this.baseIdentifierLabel.setText(this.baseLocation);
-        this.baseId = baseDAO.getBaseIdFromMapWithBaseName(baseLocation.toLowerCase().trim());
+        this.baseId = baseDAO.getBaseIdFromMapWithBaseNameSetInstance(baseLocation.toLowerCase().trim());
         getNumberOfBaseProducts();
         getBaseProducts();
         adjustGridPaneForBase();

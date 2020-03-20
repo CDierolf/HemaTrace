@@ -82,10 +82,19 @@ public class BaseDAO {
         return this.baseMap;
     }
 
-    public int getBaseIdFromMapWithBaseName(String baseName) {
+    public int getBaseIdFromMapWithBaseNameSetInstance(String baseName) {
         if (baseMap.containsKey(baseName)) {
             this.setBaseIdForInstance(baseMap.get(baseName));
             return baseMap.get(baseName);
+        } else {
+            return 0;
+        }
+    }
+    public int getBaseIdFromMap(String baseName) {
+        System.out.println("BASEMAP SIZE: " + baseMap.size());
+        System.out.println("BASEMAP BASEMAP: " + baseMap);
+        if (baseMap.containsKey(baseName.toLowerCase())) {
+            return baseMap.get(baseName.toLowerCase());
         } else {
             return 0;
         }

@@ -105,7 +105,7 @@ public class AdminLoginViewController implements Initializable {
             window.setResizable(false);
             window.show();
         } catch (IOException ex) {
-            log.error("An error occurred attempting to load the AdminDashboardView from AdminLoginView");
+            log.error("An error occurred attempting to load the AdminDashboardView from AdminLoginView", ex);
         }
     }
 }

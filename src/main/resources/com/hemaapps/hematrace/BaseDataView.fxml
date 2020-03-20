@@ -2,21 +2,19 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
-<AnchorPane id="AnchorPane" prefHeight="234.0" prefWidth="593.0" style="-fx-background-color: #fff; -fx-border-color: #99773D; -fx-border-width: 2px; -fx-border-radius: 10;" stylesheets="@../../../CSS/AdminCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemaapps.hematrace.DashboardViewControllers.BaseDataViewController">
+<AnchorPane id="AnchorPane" prefHeight="248.0" prefWidth="593.0" style="-fx-background-color: #fff; -fx-border-color: #99773D; -fx-border-width: 2px; -fx-border-radius: 10;" stylesheets="@../../../CSS/AdminCSS.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemaapps.hematrace.DashboardViewControllers.BaseDataViewController">
    <children>
-      <Button layoutX="471.0" layoutY="193.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="101.0" style="-fx-background-color: #fff;" styleClass="viewDetailsButton" text="View Details" />
+      <Button fx:id="viewDetailsButton" layoutX="478.0" layoutY="207.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="101.0" style="-fx-background-color: #fff;" styleClass="viewDetailsButton" text="View Details" />
       <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="589.0" spacing="280.0">
          <children>
-            <Label fx:id="baseLabel" prefHeight="37.0" prefWidth="189.0" text="LifeFlight 1" />
-            <CheckBox fx:id="plasmaCheck" mnemonicParsing="false" text="Plasma Base" />
+            <Label fx:id="baseLabel" prefHeight="37.0" prefWidth="189.0" text="Loading data..." />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -24,26 +22,14 @@
       </HBox>
       <AnchorPane fx:id="dataAnchorPane" layoutX="16.0" layoutY="53.0" prefHeight="87.0" prefWidth="556.0">
          <children>
-            <VBox fx:id="detailsVBox" layoutX="14.0" layoutY="5.0" prefHeight="78.0" prefWidth="537.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="292.0" spacing="26.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="335.0" spacing="30.0">
-                           <children>
-                              <Label prefHeight="17.0" prefWidth="114.0" styleClass="dataLabel" text="PRBC Unit:" />
-                              <Label fx:id="prbc1Text" prefHeight="17.0" prefWidth="163.0" styleClass="dataLabel" text="W2019193294832904823" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="156.0" spacing="30.0">
-                           <children>
-                              <Label prefHeight="17.0" prefWidth="38.0" styleClass="dataLabel" text="Status" />
-                              <Circle fx:id="prbc1Circle" fill="#41ff1f" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+            <ScrollPane fx:id="detailsScrollPane" layoutX="4.0" prefHeight="144.0" prefWidth="556.0">
+               <content>
+                  <VBox fx:id="detailsVBox" prefHeight="140.0" prefWidth="554.0" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding></VBox>
+               </content>
+            </ScrollPane>
          </children>
       </AnchorPane>
       <Separator layoutX="2.0" layoutY="43.0" prefHeight="10.0" prefWidth="424.0" />

@@ -12,7 +12,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" layoutX="1.0" prefHeight="137.0" prefWidth="871.0" style="-fx-background-color: #99773D;">
          <children>
-            <Label fx:id="dashboardLabel" prefHeight="63.0" prefWidth="806.0" text="Administrator Dashboard">
+            <Label fx:id="dashboardLabel" prefHeight="63.0" prefWidth="806.0" stylesheets="@../../../stylesheets/AdminCSS.css" text="Administrator Dashboard">
                <HBox.margin>
                   <Insets left="20.0" />
                </HBox.margin>
@@ -26,6 +26,9 @@
                   <Circle fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
                   <Label text="Administrative Tools" textAlignment="CENTER" wrapText="true" />
                </children>
+               <padding>
+                  <Insets bottom="18.0" />
+               </padding>
             </VBox>
             <VBox alignment="CENTER" prefHeight="137.0" prefWidth="127.0" spacing="10.0">
                <children>

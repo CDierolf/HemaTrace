@@ -2,13 +2,13 @@ package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.Model.BloodProduct;
-import com.hemaapps.hematrace.Model.BloodProductImpl;
 import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +32,8 @@ public class BaseProductsDAO extends DatabaseService {
     private ResultSet resultSet;
     private List<PlasmaImpl> basePlasmaProducts = new ArrayList<>();
     private List<PRBCImpl> basePRBCProducts = new ArrayList<>();
-    private List<List<BloodProduct>> combinedProducts = new ArrayList<>();
     private static List<String> productDispositions = new ArrayList<>();
+    private static HashMap<Integer, String> productTypeMap = new HashMap<>();
     //private List<BloodProduct> baseProducts = new ArrayList<>();
 
     private BaseProductsDAO() {
@@ -51,6 +51,7 @@ public class BaseProductsDAO extends DatabaseService {
         if (single_instance == null) {
             log.info("BaseProductsDAO singleton initialized.");
             populateDispositions();
+            populateProductTypes();
             single_instance = new BaseProductsDAO();
 
         }
@@ -58,6 +59,14 @@ public class BaseProductsDAO extends DatabaseService {
         return single_instance;
     }
 
+    public HashMap<Integer, String> getProductTypeMap() {
+        return productTypeMap;
+    }
+
+    public void setProductTypeMap(HashMap<Integer, String> productTypeMap) {
+        this.productTypeMap = productTypeMap;
+    }
+    
     public void setBaseId(int baseId) {
         this.baseId = baseId;
     }
@@ -208,9 +217,30 @@ public class BaseProductsDAO extends DatabaseService {
 
             }
         }
+    }
+    
+    private static void populateProductTypes() throws SQLException {
+        String query = "{call [sp_retrieveProductTypes] }";
+        ResultSet rs = null;
+        DatabaseService db = new DatabaseService();
         
-        System.out.println("DISPOSITION LIST SIZE: " + productDispositions.size());
-
+        try {
+            rs = db.callableStatementRs(query, null, null);
+        } catch (SQLException ex) {
+            log.error("ERROR encountered attempting to populate the "
+                    + "product disposition list: ", ex);
+        }
+        
+        if (rs != null) {
+            try {
+                while (rs.next()) {
+                    productTypeMap.put(rs.getInt("product_type_id"), rs.getString("product_type".toLowerCase()));
+                }
+            } catch (SQLException ex) {
+                log.error("ERROR encountered attempting to populate the "
+                    + "product type map: ", ex);
+            }
+        }
     }
 
     public List<String> getProductDispositions() {

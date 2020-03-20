@@ -18,13 +18,16 @@ import javafx.scene.layout.HBox;
 //Begin Subclass BaseUnit
 public class BaseUnit extends HBox{
     
+    private final String LABEL_STYLE = "-fx-font: 14px 'Arial Bold'; -fx-text-fill: #111;"
+            + "-fx-border-width: 2px;";
+    
     HBox mainHBox = new HBox();
     HBox unitDetail = new HBox();
     HBox unitStatus = new HBox();
     
     Label unitTypeLabel = new Label();
     Label unitDNLabel = new Label();
-    Label statusLabel = new Label();
+    Label statusLabel = new Label("Status");
     
     StatusCircle statusCircle = new StatusCircle();
     
@@ -33,18 +36,17 @@ public class BaseUnit extends HBox{
         this.unitTypeLabel.setText(unitType);
         this.unitDNLabel.setText(dn);
         this.statusCircle = statusCircle;
+        buildBaseUnit();
     }
     
-    
-    private void buildBaseUnit() {
+    public void buildBaseUnit() {
         buildUnitDetailHBox();
         buildUnitStatusHBox();
         buildMainHBox();
-        
     }
     
     private void buildMainHBox() {
-        mainHBox.setSpacing(26.0);
+        mainHBox.setSpacing(200.0);
         mainHBox.setMaxWidth(537.0);
         mainHBox.setMaxHeight(36.0);
         mainHBox.setAlignment(Pos.CENTER_LEFT);
@@ -54,26 +56,33 @@ public class BaseUnit extends HBox{
     
     private void buildUnitDetailHBox() {
         unitDetail.setSpacing(30.0);
-        unitDetail.setMaxWidth(335.0);
+        unitDetail.setMaxWidth(350.0);
         unitDetail.setMaxHeight(36.0);
+        unitDetail.setAlignment(Pos.CENTER_LEFT);
         
         unitTypeLabel.setMaxWidth(114.0);
         unitTypeLabel.setMaxHeight(17.0);
+        unitTypeLabel.setStyle(LABEL_STYLE);
+        unitTypeLabel.setAlignment(Pos.CENTER_LEFT);
         
         unitDNLabel.setMaxWidth(163.0);
         unitDNLabel.setMaxHeight(17.0);
+        unitDNLabel.setStyle(LABEL_STYLE);
+        unitDNLabel.setAlignment(Pos.CENTER_LEFT);
         
         unitDetail.getChildren().addAll(unitTypeLabel, unitDNLabel);
     }
     
     private void buildUnitStatusHBox() {
-        
-        unitStatus.setSpacing(30.0);
-        unitStatus.setMaxWidth(156.0);
+        unitStatus.setSpacing(60.0);
+        unitStatus.setMaxWidth(200.0);
         unitStatus.setMaxHeight(36.0);
+        unitStatus.setAlignment(Pos.CENTER_RIGHT);
         
-        statusLabel.setMaxWidth(38.0);
+        statusLabel.setMaxWidth(50.0);
         statusLabel.setMaxHeight(17);
+        statusLabel.setStyle(LABEL_STYLE);
+        statusLabel.setAlignment(Pos.CENTER_RIGHT);
         
         unitStatus.getChildren().addAll(statusLabel, statusCircle);
         
