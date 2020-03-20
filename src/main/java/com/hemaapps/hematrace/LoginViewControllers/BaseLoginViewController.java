@@ -7,6 +7,7 @@ import com.hemaapps.hematrace.utilities.Alerts;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -68,6 +69,7 @@ public class BaseLoginViewController implements Initializable {
         log.info("BaseLoginViewController successfully initialized.");
         try {
             populateBaseComboBox();
+            this.loginButton.setDefaultButton(true);
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(BaseLoginViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,7 +99,6 @@ public class BaseLoginViewController implements Initializable {
         // Gotta go up one level to access resources
         FXMLLoader loader = new FXMLLoader(BaseLoginViewController.class.getResource("../AdminLoginView.fxml"));
 
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent baseDashboardViewParent = loader.load();
         Scene baseDashboardView = new Scene(baseDashboardViewParent, 640, 400);
         Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -115,7 +116,7 @@ public class BaseLoginViewController implements Initializable {
      * @param event
      * @throws IOException
      */
-    public void handleBaseLoginButtonClicked(ActionEvent event) throws IOException {
+    public void handleBaseLoginButtonClicked(ActionEvent event) throws IOException, SQLException, ParseException {
 
         // Ensure that a base is selected.
         if (baseComboBox.getValue() != null) {
@@ -140,7 +141,7 @@ public class BaseLoginViewController implements Initializable {
             window.setY((screenBounds.getHeight() - height) / 2);
 
             window.setScene(baseDashboardScene);
-            window.setTitle(title + baseValue + " Dashboard");
+            window.setTitle(String.format("%s - %s - Dashboard", title, baseValue));
             window.setResizable(false);
             window.show();
 

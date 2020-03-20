@@ -22,14 +22,25 @@ import org.slf4j.LoggerFactory;
 public class BaseDAO {
 
     private static BaseDAO single_instance = null;
+    private static int baseIdForInstance;
+    private static String baseValue;
+    private static int numBaseProducts;
 
+    public static BaseDAO getSingle_instance() {
+        return single_instance;
+    }
+
+    public static void setSingle_instance(BaseDAO single_instance) {
+        BaseDAO.single_instance = single_instance;
+    }
+    
     private static List<Base> bases = new ArrayList<>();
     private static HashMap<String, Integer> baseMap = new HashMap<>();
     private static List<String> baseNames = new ArrayList<>();
     private static final DatabaseService db = new DatabaseService();
     private static final Logger log = LoggerFactory.getLogger(BaseDAO.class);
 
-    private BaseDAO(){
+    private BaseDAO() {
     }
 
     public static BaseDAO getInstance() throws SQLException {
@@ -43,6 +54,21 @@ public class BaseDAO {
 
         return single_instance;
     }
+    public String getBaseValue() {
+        return baseValue;
+    }
+
+    public void setBaseValue(String baseValue) {
+        BaseDAO.baseValue = baseValue;
+    }
+    
+    public int getBaseIdForInstance() {
+        return baseIdForInstance;
+    }
+
+    public void setBaseIdForInstance(int baseIdForInstance) {
+        BaseDAO.baseIdForInstance = baseIdForInstance;
+    }
 
     public List<Base> getBases() {
         return this.bases;
@@ -55,12 +81,21 @@ public class BaseDAO {
     public HashMap<String, Integer> getBaseMap() {
         return this.baseMap;
     }
-    
-    public int getBaseIdFromMapWithBaseName(String baseName) {
+
+    public int getBaseIdFromMapWithBaseNameSetInstance(String baseName) {
         if (baseMap.containsKey(baseName)) {
-             return baseMap.get(baseName);
+            this.setBaseIdForInstance(baseMap.get(baseName));
+            return baseMap.get(baseName);
         } else {
-            System.out.println("FUCK");
+            return 0;
+        }
+    }
+    public int getBaseIdFromMap(String baseName) {
+        System.out.println("BASEMAP SIZE: " + baseMap.size());
+        System.out.println("BASEMAP BASEMAP: " + baseMap);
+        if (baseMap.containsKey(baseName.toLowerCase())) {
+            return baseMap.get(baseName.toLowerCase());
+        } else {
             return 0;
         }
     }
@@ -106,4 +141,15 @@ public class BaseDAO {
         }
     }
     
+    public int getNumBaseProducts() {
+        return numBaseProducts;
+    }
+
+    public void setNumBaseProducts(int numBaseProducts) {
+        BaseDAO.numBaseProducts = numBaseProducts;
+    }
+
+    
+
+
 } //End Subclass BaseDAO

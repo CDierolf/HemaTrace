@@ -6,6 +6,7 @@ import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.utilities.PasswordUtilities;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class UserDAO {
@@ -14,7 +15,7 @@ public class UserDAO {
     private static PasswordUtilities passwordUtilties = null;
     
     
-    public static long loginUser(String username, String password) throws NoSuchAlgorithmException, SQLException {
+    public static long loginUser(String username, String password) throws NoSuchAlgorithmException, SQLException, ParseException {
         db.init();
         String Q1 = "{call sp_loginUser(?,?,?) }";
         // We need to set up the parameters for the stored proc into an arraylist
@@ -36,7 +37,20 @@ public class UserDAO {
                 dataTypes.toArray(new String[dataTypes.size()]));
 
         return loggedin;
-
+    }
+    
+    public static boolean validateCrewUser(String userId) throws SQLException, ParseException {
+        String q1 = "{call [sp_validateAndRetrieveUserBasedOnCrewId](?,?)}";
+        ArrayList<String> userValues = new ArrayList<>();
+        ArrayList<String> dataTypes = new ArrayList<>();
+        
+        userValues.add(userId);
+        dataTypes.add("string");
+        
+        int validUser = db.callableStatementReturnInt(q1, userValues.toArray(new String[userValues.size()]),
+                dataTypes.toArray(new String[dataTypes.size()]));
+        
+        return validUser > 0;
     }
 
 } //End Subclass UserDAO

@@ -2,12 +2,13 @@ package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.Model.BloodProduct;
-import com.hemaapps.hematrace.Model.BloodProductImpl;
 import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,33 +18,55 @@ import org.slf4j.LoggerFactory;
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 4, 2020
- * @Subclass BaseProductsDAO Description:
+ * @Subclass BaseProductsDAO Description: Singleton BaseProductsDAO class
  */
 //Imports
 //Begin Subclass BaseProductsDAO
-public class BaseProductsDAO {
+public class BaseProductsDAO extends DatabaseService {
 
-    private final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
+
+    private static BaseProductsDAO single_instance = null;
     private int baseId;
     private int maxNumProducts;
+    private ResultSet resultSet;
     private List<PlasmaImpl> basePlasmaProducts = new ArrayList<>();
     private List<PRBCImpl> basePRBCProducts = new ArrayList<>();
-    List<Object> baseProducts = new ArrayList<>();
+    private static List<String> productDispositions = new ArrayList<>();
+    private static HashMap<Integer, String> productTypeMap = new HashMap<>();
+    //private List<BloodProduct> baseProducts = new ArrayList<>();
 
-    public List<Object> getBaseProducts() {
-        baseProducts.add(basePlasmaProducts);
-        baseProducts.add(basePRBCProducts);
-        return baseProducts;
+    private BaseProductsDAO() {
     }
 
-    public void setBaseProducts(List<Object> baseProducts) {
-        this.baseProducts = baseProducts;
+    public static BaseProductsDAO getSingle_instance() {
+        return single_instance;
     }
 
-    public void initDao(int baseId) {
-        parseBaseProductResultSet(getBaseProductResultSet(baseId));
+    public static void setSingle_instance(BaseProductsDAO single_instance) {
+        BaseProductsDAO.single_instance = single_instance;
     }
 
+    public static BaseProductsDAO getInstance() throws SQLException {
+        if (single_instance == null) {
+            log.info("BaseProductsDAO singleton initialized.");
+            populateDispositions();
+            populateProductTypes();
+            single_instance = new BaseProductsDAO();
+
+        }
+
+        return single_instance;
+    }
+
+    public HashMap<Integer, String> getProductTypeMap() {
+        return productTypeMap;
+    }
+
+    public void setProductTypeMap(HashMap<Integer, String> productTypeMap) {
+        this.productTypeMap = productTypeMap;
+    }
+    
     public void setBaseId(int baseId) {
         this.baseId = baseId;
     }
@@ -60,8 +83,10 @@ public class BaseProductsDAO {
         return this.maxNumProducts;
     }
 
-    public void getBaseBloodProductsResultSet(int baseId) {
-        parseBaseProductResultSet(getBaseProductResultSet(baseId));
+    public void setBaseBloodProductsResultSet(int baseId) {
+        getBaseProductResultSet(baseId);
+        parseBaseProductResultSet();
+
     }
 
     public List<PlasmaImpl> getBasePlasmaProducts() {
@@ -72,7 +97,16 @@ public class BaseProductsDAO {
         return basePRBCProducts;
     }
 
-    private ResultSet getBaseProductResultSet(int baseId) {
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    public void setResultSet(ResultSet resultSet) {
+        this.resultSet = resultSet;
+    }
+
+    private void getBaseProductResultSet(int baseId) {
+        setBaseId(baseId);
         List<String> baseValues = new ArrayList<>();
         List<String> dataTypes = new ArrayList<>();
         DatabaseService db = new DatabaseService();
@@ -89,11 +123,13 @@ public class BaseProductsDAO {
             log.error("ERROR: ", ex);
         }
 
-        return rs;
+        this.setResultSet(rs);
     }
 
-    private void parseBaseProductResultSet(ResultSet rs) {
-
+    private void parseBaseProductResultSet() {
+        basePlasmaProducts.clear();
+        basePRBCProducts.clear();
+        ResultSet rs = this.getResultSet();
         if (rs != null) {
             try {
                 while (rs.next()) {
@@ -128,17 +164,21 @@ public class BaseProductsDAO {
                         basePRBCProducts.add(bloodProduct);
                     }
                 }
+                maxNumProducts += basePRBCProducts.size();
+                maxNumProducts += basePlasmaProducts.size();
             } catch (SQLException ex) {
                 log.error("ERROR: ", ex);
             }
         } else {
-            log.error("Resultset was null.");
+            log.warn("Resultset was null.");
         }
-        System.out.println("PRBC PRODUCT #: " + basePRBCProducts.size());
-        System.out.println("PLASMA PRODUCT #: " + basePlasmaProducts.size());
+        log.info("PRBC Products obtained for baseID: " + getBaseId()
+                + ". " + basePRBCProducts.size() + " products retrieved.");
+        log.info("PLASMA Products obtained for baseID: " + getBaseId() + ". "
+                + basePlasmaProducts.size() + " products retrieved.");
     }
 
-    public int getCurrentNumberOfProductsForBase(int base) throws SQLException {
+    public int getCurrentNumberOfProductsForBase(int base) throws SQLException, ParseException {
         List<String> inputs = new ArrayList<>();
         List<String> inputDataTypes = new ArrayList<>();
         DatabaseService db = new DatabaseService();
@@ -154,5 +194,60 @@ public class BaseProductsDAO {
 
         return numProductsForBase;
 
+    }
+
+    private static void populateDispositions() {
+
+        String query = "{call [sp_retrieveProductDispositions] }";
+        ResultSet rs = null;
+        DatabaseService db = new DatabaseService();
+
+        try {
+            rs = db.callableStatementRs(query, null, null);
+        } catch (SQLException ex) {
+            log.error("ERROR encountered attempting to populate the "
+                    + "product disposition list: ", ex);
+        }
+        if (rs != null) {
+            try {
+                while (rs.next()) {
+                    productDispositions.add(rs.getString("product_status"));
+                }
+            } catch (SQLException ex) {
+
+            }
+        }
+    }
+    
+    private static void populateProductTypes() throws SQLException {
+        String query = "{call [sp_retrieveProductTypes] }";
+        ResultSet rs = null;
+        DatabaseService db = new DatabaseService();
+        
+        try {
+            rs = db.callableStatementRs(query, null, null);
+        } catch (SQLException ex) {
+            log.error("ERROR encountered attempting to populate the "
+                    + "product disposition list: ", ex);
+        }
+        
+        if (rs != null) {
+            try {
+                while (rs.next()) {
+                    productTypeMap.put(rs.getInt("product_type_id"), rs.getString("product_type".toLowerCase()));
+                }
+            } catch (SQLException ex) {
+                log.error("ERROR encountered attempting to populate the "
+                    + "product type map: ", ex);
+            }
+        }
+    }
+
+    public List<String> getProductDispositions() {
+        return productDispositions;
+    }
+
+    public void setProductDispositions(List<String> productDispositions) {
+        BaseProductsDAO.productDispositions = productDispositions;
     }
 } //End Subclass BaseProductsDAO
