@@ -6,8 +6,15 @@
 package com.hemaapps.hematrace.DashboardViewControllers;
 
 //import Enums.BloodProductStatus;
+import com.hemaapps.hematrace.DAO.BaseDAO;
+import com.hemaapps.hematrace.DAO.BaseProductsDAO;
+import com.hemaapps.hematrace.controls.BaseUnit;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,9 +22,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import org.slf4j.LoggerFactory;
 
 /**
  * FXML Controller class
@@ -26,6 +33,10 @@ import javafx.scene.layout.VBox;
  */
 public class AdminDashboardViewController implements Initializable {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(AdminDashboardViewController.class);
+
+    private BaseDAO baseDao;
+    private BaseProductsDAO baseProductsDao;
     @FXML
     private Label dashboardLabel;
     @FXML
@@ -38,49 +49,37 @@ public class AdminDashboardViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        try {
-//            //loadUI();
-//        } catch (IOException ex) {
-//            Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            baseDao = BaseDAO.getInstance();
+            baseProductsDao = BaseProductsDAO.getInstance();
+            loadUI();
+        } catch (IOException ex) {
+            log.error("Error initializing the AdminDashboardViewController: ", ex);
+        } catch (SQLException ex) {
+            log.error("Error initializing the AdminDashboardViewController: ", ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void loadUI() throws IOException {
-        
-        // TODO
-        // Get base data from database
-        // If plasma base, load PlasmaBaseDataView and pass data into its controller.
-        // If regular base, load BaseDataView and pass data into IT's controller.
-        // In respective controller, hook View Details button to load detailed view based on
-        // the first parameter of initData.
-        // Then load the views into the AdminDashboardView.
-        for (int i = 1; i <= 9; i++) {
-            
+    public void loadUI() throws IOException, SQLException, ParseException {
+        System.out.println("CALLED!");
+        for (int i = 0; i < baseDao.getBases().size(); i++) {
             FXMLLoader loader = new FXMLLoader();
-           // loader.setLocation(getClass().getResource("/Views/DashboardViews/AdminDashboardView/BaseDataView.fxml"));
+            loader.setLocation(getClass().getResource("../BaseDataView.fxml"));
             AnchorPane pane = loader.load();
-            pane.setId("LifeFlight" + i);
-            
-//            BaseDataViewController controller = loader.getController();
-//            controller.initData("LifeFlight " + i, "W201919620342342343", "W22342340192818219",
-//                    BloodProductStatus.OK, BloodProductStatus.CHECKED_OUT);
-//            
-            
-            // Sort the Views
-            // If odd, leftVBox, even, rightVBox.
-            if (i % 2 != 0){
+            String baseName = baseDao.getBases().get(i).getName();
+
+            BaseDataViewController controller = loader.getController();
+            controller.initData(baseName);
+//             Sort the Views
+//             If odd, leftVBox, even, rightVBox.
+            if (i % 2 != 0) {
                 leftVBox.getChildren().add(pane);
             } else {
                 rightVBox.getChildren().add(pane);
             }
         }
-
     }
-
-    public void initData(String userName) {
-        System.out.println(userName);
-    }
-
-    FXMLLoader loader = new FXMLLoader();
 
 }

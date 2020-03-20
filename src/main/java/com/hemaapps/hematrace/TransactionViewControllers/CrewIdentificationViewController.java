@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,11 +69,17 @@ public class CrewIdentificationViewController implements Initializable{
             controller.setUser(user);
             controller.setTransactionType(tType);
             
-            Stage window = (Stage) this.crewIdTextField.getScene().getWindow();
-            window.setScene(transactionScene);
-            window.setTitle("HemaTrace - " + baseDao.getBaseValue() + " - Crew Identification");
-            window.setResizable(false);
-            window.show();
+            Stage stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setScene(transactionScene);
+            stage.setTitle("HemaTrace - " + baseDao.getBaseValue() + " - Crew Identification");
+            stage.setResizable(false);
+            stage.show();
+            
+            closeWindow();
+            
+            
+            
         } else {
             alerts = new Alerts(Alert.AlertType.ERROR, "Identification is not valid or user is not authorized.",
                     "You must provide a valid crew id.", "In order to proceed, please ensure"
@@ -108,6 +115,11 @@ public class CrewIdentificationViewController implements Initializable{
         }
         
         return validUser;
+    }
+    
+    private void closeWindow() {
+        Stage thisStage = (Stage) this.crewIdTextField.getScene().getWindow();
+        thisStage.close();
     }
 
 } //End Subclass CrewIdentificationViewController

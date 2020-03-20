@@ -16,7 +16,7 @@
          <children>
             <VBox alignment="CENTER" prefHeight="58.0" prefWidth="487.0" spacing="5.0">
                <children>
-                  <Label alignment="CENTER" prefWidth="250.0" text="Transaction Date/Time" />
+                  <Label alignment="CENTER" prefWidth="250.0" text="Check Out Date/Time" />
                   <TextField fx:id="transactionDateTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" />
                </children>
                <padding>
@@ -30,10 +30,13 @@
       </VBox>
    </left>
    <right>
-      <VBox fx:id="checkInVBox" alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
+      <VBox fx:id="checkInVBox" alignment="CENTER" maxWidth="-Infinity" prefHeight="584.0" prefWidth="460.0" spacing="5.0" style="-fx-border-color: #000; -fx-border-radius: 10; -fx-border-width: 2;" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="checkInButton" mnemonicParsing="false" onAction="#handleCheckInButtonClicked" prefHeight="27.0" prefWidth="127.0" text="Check In" />
          </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
       </VBox>
    </right>
    <padding>

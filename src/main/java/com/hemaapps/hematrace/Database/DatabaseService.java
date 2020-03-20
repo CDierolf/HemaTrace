@@ -68,7 +68,7 @@ public class DatabaseService {
 
     public void loadProperties() {
 
-        try (InputStream input = new FileInputStream("src/main/resources/properties/database.properties")) {
+        try ( InputStream input = new FileInputStream("src/main/resources/properties/database.properties")) {
             Properties prop = new Properties();
             prop.load(input);
             setDbIpAddress(prop.getProperty("dbIpaddress"));
@@ -116,39 +116,39 @@ public class DatabaseService {
     public int callableStatementReturnInt(String query, String[] inputs,
             String[] inputDataTypes) throws SQLException {
         init();
-        
+
         CallableStatement cs = null;
         int returnValue = 0;
         try {
             connection = connectionPool.getConnection();
             cs = connection.prepareCall(query);
+            cs.registerOutParameter(inputs.length + 1, java.sql.Types.INTEGER);
             // This section sets up parameters for the query from the arguments            
             for (int i = 0; i < inputs.length; i++) {
                 if ("int".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setInt(i+1, Integer.parseInt(inputs[i]));
+                    cs.setInt(i + 1, Integer.parseInt(inputs[i]));
                 } else if ("bit".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setBoolean(i+1, Boolean.parseBoolean(inputs[i]) );
+                    cs.setBoolean(i + 1, Boolean.parseBoolean(inputs[i]));
                 } else if ("money".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setDouble(i+1, Double.parseDouble(inputs[i]) );
+                    cs.setDouble(i + 1, Double.parseDouble(inputs[i]));
                 } else if ("string".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setString(i+1, inputs[i]);
+                    cs.setString(i + 1, inputs[i]);
                 } else if ("date".equalsIgnoreCase(inputDataTypes[i])) {
                     SimpleDateFormat d = new SimpleDateFormat("y-M-d");
-                    cs.setDate(i+1, java.sql.Date.valueOf(inputs[i]));
+                    cs.setDate(i + 1, java.sql.Date.valueOf(inputs[i]));
                 } else if ("time".equalsIgnoreCase(inputDataTypes[i])) {
                     SimpleDateFormat d = new SimpleDateFormat("HH:mm:ss");
-                    cs.setDate(i+1, java.sql.Date.valueOf(inputs[i]));
+                    cs.setDate(i + 1, java.sql.Date.valueOf(inputs[i]));
                 } else if ("datetime".equalsIgnoreCase(inputDataTypes[i])) {
                     java.util.Date result;
                     SimpleDateFormat d = new SimpleDateFormat("y-M-d HH:mm:ss");//2018-09-18 11:09:44
-                    result = d.parse (inputs[i]);
+                    result = d.parse(inputs[i]);
                     java.sql.Date sqlDate = new java.sql.Date(result.getTime());
-                    cs.setDate(i+1, sqlDate);
+                    cs.setDate(i + 1, sqlDate);
                 } // other data types
             }
-            cs.registerOutParameter(inputs.length+1, java.sql.Types.INTEGER);
             cs.execute();
-            returnValue = cs.getInt(inputs.length+1);
+            returnValue = cs.getInt(inputs.length + 1);
             close();
         } catch (Exception e) {
             //String module, String query, Boolean exit, String error
@@ -171,40 +171,42 @@ public class DatabaseService {
             }
 
             cs = connection.prepareCall(query);
-            // This section sets up parameters for the query from the arguments            
-            for (int i = 0; i < inputs.length; i++) {
-                if ("int".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setInt(i + 1, Integer.parseInt(inputs[i]));
-                } else if ("bit".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setBoolean(i + 1, Boolean.parseBoolean(inputs[i]));
-                } else if ("money".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setDouble(i + 1, Double.parseDouble(inputs[i]));
-                } else if ("string".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setString(i + 1, inputs[i]);
-                } else if ("date".equalsIgnoreCase(inputDataTypes[i])) {
-                    SimpleDateFormat d = new SimpleDateFormat("y-M-d");
-                    cs.setDate(i + 1, java.sql.Date.valueOf(inputs[i]));
-                } else if ("time".equalsIgnoreCase(inputDataTypes[i])) {
-                    cs.setDate(i + 1, Date.valueOf(inputs[i]));
-                } else if ("datetime".equalsIgnoreCase(inputDataTypes[i])) {
-                    java.util.Date result;
-                    SimpleDateFormat d = new SimpleDateFormat("y-M-d HH:mm:ss");//2018-09-18 11:09:44
-                    result = d.parse(inputs[i]);
-                    java.sql.Date sqlDate = new java.sql.Date(result.getTime());
+            // This section sets up parameters for the query from the arguments     
+            if (inputs != null && inputDataTypes != null) {
+                for (int i = 0; i < inputs.length; i++) {
+                    if ("int".equalsIgnoreCase(inputDataTypes[i])) {
+                        cs.setInt(i + 1, Integer.parseInt(inputs[i]));
+                    } else if ("bit".equalsIgnoreCase(inputDataTypes[i])) {
+                        cs.setBoolean(i + 1, Boolean.parseBoolean(inputs[i]));
+                    } else if ("money".equalsIgnoreCase(inputDataTypes[i])) {
+                        cs.setDouble(i + 1, Double.parseDouble(inputs[i]));
+                    } else if ("string".equalsIgnoreCase(inputDataTypes[i])) {
+                        cs.setString(i + 1, inputs[i]);
+                    } else if ("date".equalsIgnoreCase(inputDataTypes[i])) {
+                        SimpleDateFormat d = new SimpleDateFormat("y-M-d");
+                        cs.setDate(i + 1, java.sql.Date.valueOf(inputs[i]));
+                    } else if ("time".equalsIgnoreCase(inputDataTypes[i])) {
+                        cs.setDate(i + 1, Date.valueOf(inputs[i]));
+                    } else if ("datetime".equalsIgnoreCase(inputDataTypes[i])) {
+                        java.util.Date result;
+                        SimpleDateFormat d = new SimpleDateFormat("y-M-d HH:mm:ss");//2018-09-18 11:09:44
+                        result = d.parse(inputs[i]);
+                        java.sql.Date sqlDate = new java.sql.Date(result.getTime());
 
-                    cs.setDate(i + 1, sqlDate);
-                } // other data types
+                        cs.setDate(i + 1, sqlDate);
+                    } // other data types
+                }
             }
             rs = cs.executeQuery();
 
             return rs;
         } catch (Exception e) {
             log.error("Error!: ", e);
-        } 
+        }
         return rs;
     }
-    
-    private void close() {
+
+    protected void close() {
         if (rs != null) {
             try {
                 rs.close();

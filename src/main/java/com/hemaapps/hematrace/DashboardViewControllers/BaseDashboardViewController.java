@@ -9,7 +9,9 @@ import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.BaseProductsDAO;
 import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
 import com.hemaapps.hematrace.Model.Transaction;
+import com.hemaapps.hematrace.enums.BloodProductStatus;
 import com.hemaapps.hematrace.shapes.StatusCircle;
+import com.hemaapps.hematrace.utilities.ExpiryStatusUtil;
 import java.awt.MouseInfo;
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +43,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -303,14 +304,20 @@ public class BaseDashboardViewController implements Initializable {
         int numPRBCProducts = baseProductsDao.getBasePRBCProducts().size();
         for (int i = 0; i < numPlasmaProducts; i++) {
             StatusCircle statusCircle = new StatusCircle();
-            if (baseProductsDao.getBasePlasmaProducts().get(i).getIsExpired()) {
+            
+            BloodProductStatus bpStatus = ExpiryStatusUtil.getExpiryStatus(baseProductsDao.getBasePlasmaProducts().get(i).getExpirationDate());
+            if (bpStatus == BloodProductStatus.EXPIRED) {
                 statusCircle.setFill(Color.RED);
                 statusCircle.setToolTip("Product is expired");
-            } else if (baseProductsDao.getBasePlasmaProducts().get(i).getIsExpiring()) {
+            } else if (bpStatus == BloodProductStatus.EXPIRING) {
                 statusCircle.setFill(Color.YELLOW);
                 statusCircle.setToolTip("Product is expiring.");
-            } else {
+            } else if (bpStatus == BloodProductStatus.OK){
                 statusCircle.setFill(Color.GREEN);
+                statusCircle.setToolTip("Product is OK");
+            } else if (bpStatus == BloodProductStatus.NOT_AVAILABLE) {
+                statusCircle.setFill(Color.BLACK);
+                statusCircle.setToolTip("Product status is not available");
             }
             statusCircle.setRadius(15.0);
             productGridPane.add(statusCircle, 5, numProductsDisplayed);
@@ -318,12 +325,19 @@ public class BaseDashboardViewController implements Initializable {
         }
         for (int i = 0; i < numPRBCProducts; i++) {
             StatusCircle statusCircle = new StatusCircle();
-            if (baseProductsDao.getBasePRBCProducts().get(i).getIsExpired()) {
+             BloodProductStatus bpStatus = ExpiryStatusUtil.getExpiryStatus(baseProductsDao.getBasePRBCProducts().get(i).getExpirationDate());
+            if (bpStatus == BloodProductStatus.EXPIRED) {
                 statusCircle.setFill(Color.RED);
-            } else if (baseProductsDao.getBasePRBCProducts().get(i).getIsExpiring()) {
+                statusCircle.setToolTip("Product is expired");
+            } else if (bpStatus == BloodProductStatus.EXPIRING) {
                 statusCircle.setFill(Color.YELLOW);
-            } else {
+                statusCircle.setToolTip("Product is expiring.");
+            } else if (bpStatus == BloodProductStatus.OK){
                 statusCircle.setFill(Color.GREEN);
+                statusCircle.setToolTip("Product is OK");
+            } else if (bpStatus == BloodProductStatus.NOT_AVAILABLE) {
+                statusCircle.setFill(Color.BLACK);
+                statusCircle.setToolTip("Product status is not available");
             }
             statusCircle.setRadius(15.0);
             statusCircle.setToolTip("Product is expired.");

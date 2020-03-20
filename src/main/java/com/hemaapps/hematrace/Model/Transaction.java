@@ -23,6 +23,15 @@ public class Transaction {
     private String productType;
     private String transactionType;
     private Date transactionDateTime;
+    private String productStatus;
+
+    public String getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
+    }
 
     public int getTransactionId() {
         return transactionId;
@@ -87,21 +96,10 @@ public class Transaction {
     public void setTransactionDateTime(Date transactionDateTime) {
         this.transactionDateTime = transactionDateTime;
     }
-    
+
     @Override
     public String toString() {
-        
-        return String.format("transaction ID: %s"
-                + "product ID: %s,"
-                + "base: %s,"
-                + "crewmember: %s,"
-                + "donor number: %s,"
-                + "product type: %s, "
-                + "transaction type: %s"
-                + "transaction date/time: %s", 
-                this.getTransactionId(), this.getProductId(), this.getBase(), this.getCrewmember(),
-                this.getDonorNumber(), this.getProductType(), this.getTransactionType(), 
-                this.getTransactionDateTime());
+        return "Transaction{" + "transactionId=" + transactionId + ", productId=" + productId + ", base=" + base + ", crewmember=" + crewmember + ", donorNumber=" + donorNumber + ", productType=" + productType + ", transactionType=" + transactionType + ", transactionDateTime=" + transactionDateTime + ", productStatus=" + productStatus + '}';
     }
 
 } //End Subclass Transaction

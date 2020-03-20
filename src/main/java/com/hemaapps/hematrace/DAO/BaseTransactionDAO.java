@@ -3,6 +3,7 @@ package com.hemaapps.hematrace.DAO;
 import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.Model.Transaction;
 import com.hemaapps.hematrace.Model.TransactionType;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 //Imports
 //Begin Subclass BaseTransactionDAO
-public class BaseTransactionDAO {
+public class BaseTransactionDAO extends DatabaseService{
 
     private final static Logger log = LoggerFactory.getLogger(BaseTransactionDAO.class);
 
@@ -155,8 +156,25 @@ public class BaseTransactionDAO {
         
     }
     
-    public void insertTransaction(Transaction transaction) {
+    public boolean insertTransaction(Transaction transaction) throws SQLException {
+        int successfulTransaction;
+        ArrayList<String> tValues = new ArrayList<>();
+        ArrayList<String> tTypes = new ArrayList<>();
+        tValues.add(transaction.getBase());
+        tTypes.add("string");
+        tValues.add(transaction.getCrewmember());
+        tTypes.add("string");
+        tValues.add(transaction.getDonorNumber());
+        tTypes.add("string");
+        tValues.add(transaction.getTransactionType());
+        tTypes.add("string");
+        tValues.add(transaction.getProductStatus());
+        tTypes.add("string");
+        String q1 = "{call [sp_insertTransaction](?,?,?,?,?,?)}";
         
+        successfulTransaction = callableStatementReturnInt(q1, tValues.toArray(new String[tValues.size()]),
+                tTypes.toArray(new String[tTypes.size()]));
+        
+        return successfulTransaction == 1;
     }
-
 } //End Subclass BaseTransactionDAO

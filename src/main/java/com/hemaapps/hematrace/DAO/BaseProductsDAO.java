@@ -22,20 +22,23 @@ import org.slf4j.LoggerFactory;
  */
 //Imports
 //Begin Subclass BaseProductsDAO
-public class BaseProductsDAO {
+public class BaseProductsDAO extends DatabaseService {
 
     private static final Logger log = LoggerFactory.getLogger(BaseProductsDAO.class);
-    
+
     private static BaseProductsDAO single_instance = null;
     private int baseId;
     private int maxNumProducts;
     private ResultSet resultSet;
     private List<PlasmaImpl> basePlasmaProducts = new ArrayList<>();
     private List<PRBCImpl> basePRBCProducts = new ArrayList<>();
+    private List<List<BloodProduct>> combinedProducts = new ArrayList<>();
+    private static List<String> productDispositions = new ArrayList<>();
     //private List<BloodProduct> baseProducts = new ArrayList<>();
-    
-    private BaseProductsDAO() {}
-    
+
+    private BaseProductsDAO() {
+    }
+
     public static BaseProductsDAO getSingle_instance() {
         return single_instance;
     }
@@ -43,12 +46,13 @@ public class BaseProductsDAO {
     public static void setSingle_instance(BaseProductsDAO single_instance) {
         BaseProductsDAO.single_instance = single_instance;
     }
-    
+
     public static BaseProductsDAO getInstance() throws SQLException {
         if (single_instance == null) {
             log.info("BaseProductsDAO singleton initialized.");
+            populateDispositions();
             single_instance = new BaseProductsDAO();
-            
+
         }
 
         return single_instance;
@@ -73,7 +77,7 @@ public class BaseProductsDAO {
     public void setBaseBloodProductsResultSet(int baseId) {
         getBaseProductResultSet(baseId);
         parseBaseProductResultSet();
-        
+
     }
 
     public List<PlasmaImpl> getBasePlasmaProducts() {
@@ -83,7 +87,7 @@ public class BaseProductsDAO {
     public List<PRBCImpl> getBasePRBCProducts() {
         return basePRBCProducts;
     }
-    
+
     public ResultSet getResultSet() {
         return resultSet;
     }
@@ -151,7 +155,6 @@ public class BaseProductsDAO {
                         basePRBCProducts.add(bloodProduct);
                     }
                 }
-                
                 maxNumProducts += basePRBCProducts.size();
                 maxNumProducts += basePlasmaProducts.size();
             } catch (SQLException ex) {
@@ -160,9 +163,9 @@ public class BaseProductsDAO {
         } else {
             log.warn("Resultset was null.");
         }
-        log.info("PRBC Products obtained for baseID: " + getBaseId() 
+        log.info("PRBC Products obtained for baseID: " + getBaseId()
                 + ". " + basePRBCProducts.size() + " products retrieved.");
-        log.info("PLASMA Products obtained for baseID: " + getBaseId() + ". " 
+        log.info("PLASMA Products obtained for baseID: " + getBaseId() + ". "
                 + basePlasmaProducts.size() + " products retrieved.");
     }
 
@@ -183,5 +186,38 @@ public class BaseProductsDAO {
         return numProductsForBase;
 
     }
-    
+
+    private static void populateDispositions() {
+
+        String query = "{call [sp_retrieveProductDispositions] }";
+        ResultSet rs = null;
+        DatabaseService db = new DatabaseService();
+
+        try {
+            rs = db.callableStatementRs(query, null, null);
+        } catch (SQLException ex) {
+            log.error("ERROR encountered attempting to populate the "
+                    + "product disposition list: ", ex);
+        }
+        if (rs != null) {
+            try {
+                while (rs.next()) {
+                    productDispositions.add(rs.getString("product_status"));
+                }
+            } catch (SQLException ex) {
+
+            }
+        }
+        
+        System.out.println("DISPOSITION LIST SIZE: " + productDispositions.size());
+
+    }
+
+    public List<String> getProductDispositions() {
+        return productDispositions;
+    }
+
+    public void setProductDispositions(List<String> productDispositions) {
+        BaseProductsDAO.productDispositions = productDispositions;
+    }
 } //End Subclass BaseProductsDAO

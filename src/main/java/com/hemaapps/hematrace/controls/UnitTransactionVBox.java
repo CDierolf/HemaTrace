@@ -21,12 +21,11 @@ public class UnitTransactionVBox extends VBox {
     
     private final double VBOX_HEIGHT = 58.0;
     private final double VBOX_WIDTH = 487.0;
-    private final double VBOX_SPACING = -1;
-    private final double VBOX_PADDING = 5;
-    private final double TEXT_FIELD_WIDTH = 250;
+    private final double VBOX_SPACING = 2.0;
+    private final double VBOX_PADDING = 2.0;
+    private final double TEXT_FIELD_WIDTH = 250.0;
     private final String LABEL_STYLE = "-fx-font: 16px 'Arial Bold'; -fx-text-fill: #FFF;"
             + "-fx-border-width: 2px;";
-    
     
     private VBox unitTransactionVBox;
     private Label unitTransactionLabel;
@@ -35,17 +34,6 @@ public class UnitTransactionVBox extends VBox {
     private String unitTransactionLabelText;
     private String unitTransactionTextFieldId;
     private double vBoxHeight;
-
-    public double getvBoxHeight() {
-        return vBoxHeight;
-    }
-
-    public void setvBoxHeight(double vBoxHeight) {
-        this.vBoxHeight = vBoxHeight;
-    }
-
-    
-    
     
     public UnitTransactionVBox() {}
     public UnitTransactionVBox(String unitTransactionLabelText, String unitTransactionTextFieldId) {
@@ -53,6 +41,14 @@ public class UnitTransactionVBox extends VBox {
         this.unitTransactionTextFieldId = unitTransactionTextFieldId;
         
         buildTransactionVBox();
+    }
+    
+     public double getvBoxHeight() {
+        return vBoxHeight;
+    }
+
+    public void setvBoxHeight(double vBoxHeight) {
+        this.vBoxHeight = vBoxHeight;
     }
     
     public Label getInvalidLabel() {
