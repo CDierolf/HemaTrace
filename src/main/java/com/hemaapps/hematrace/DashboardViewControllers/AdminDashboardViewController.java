@@ -60,13 +60,11 @@ public class AdminDashboardViewController implements Initializable {
     }
 
     public void loadUI() throws IOException, SQLException, ParseException {
-        System.out.println("CALLED!");
         for (int i = 0; i < baseDao.getBases().size(); i++) {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../BaseDataView.fxml"));
             AnchorPane pane = loader.load();
             String baseName = baseDao.getBases().get(i).getName();
-
             BaseDataViewController controller = loader.getController();
             controller.initData(baseName);
 //             Sort the Views
@@ -78,5 +76,4 @@ public class AdminDashboardViewController implements Initializable {
             }
         }
     }
-
 }

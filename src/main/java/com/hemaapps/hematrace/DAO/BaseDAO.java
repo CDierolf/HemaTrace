@@ -91,13 +91,22 @@ public class BaseDAO {
         }
     }
     public int getBaseIdFromMap(String baseName) {
-        System.out.println("BASEMAP SIZE: " + baseMap.size());
-        System.out.println("BASEMAP BASEMAP: " + baseMap);
         if (baseMap.containsKey(baseName.toLowerCase())) {
             return baseMap.get(baseName.toLowerCase());
         } else {
             return 0;
         }
+    }
+    
+    public Base getBaseInfoFromList(int baseId) {
+        Base base = null;
+        for (Base b : bases) {
+            if (b.getBase_id() == baseId) {
+                base = b;
+                break;
+            }
+        }
+        return base;
     }
 
     private static void populateBaseList() throws SQLException {
