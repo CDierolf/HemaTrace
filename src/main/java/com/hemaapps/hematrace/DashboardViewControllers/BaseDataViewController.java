@@ -11,20 +11,27 @@ import com.hemaapps.hematrace.controls.BaseUnit;
 import com.hemaapps.hematrace.enums.BloodProductStatus;
 import com.hemaapps.hematrace.shapes.StatusCircle;
 import com.hemaapps.hematrace.utilities.ExpiryStatusUtil;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
@@ -59,6 +66,7 @@ public class BaseDataViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setHandlers();
         try {
             baseProductsDao = BaseProductsDAO.getInstance();
             baseDao = BaseDAO.getInstance();
@@ -69,12 +77,13 @@ public class BaseDataViewController implements Initializable {
 
     /**
      * Load data for all bases and populate each instance of the BaseDataView
-     * (one for each base) with the corresponding base data.
-     * Run in thread to prevent user boredom.
-     * @param baseName 
+     * (one for each base) with the corresponding base data. Run in thread to
+     * prevent user boredom.
+     *
+     * @param baseName
      */
     public void initData(String baseName) {
-        
+
         this.baseName = baseName;
         Thread thread = new Thread(() -> {
             Runnable run = () -> {
@@ -109,5 +118,37 @@ public class BaseDataViewController implements Initializable {
 
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public void setHandlers() {
+
+        viewDetailsButton.setOnMouseEntered(MouseEvent -> {
+            viewDetailsButton.setStyle("-fx-background-color: #99773D; "
+                    + "-fx-background-radius: 10;"
+                    + "-fx-text-fill: #FFF");
+        });
+        viewDetailsButton.setOnMouseExited(MouseEvent -> {
+            viewDetailsButton.setStyle("-fx-background-color: transparent;"
+                    + "-fx-text-fill: #000");
+        });
+
+    }
+
+    public void handleViewDetailsClicked(ActionEvent event) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../BaseDataTransactionTableView.fxml"));
+        Parent baseDataTransactionTableViewParent = loader.load();
+        Scene baseDataTransactionTableView = new Scene(baseDataTransactionTableViewParent);
+        Stage window = new Stage();
+        Stage ownerStage = (Stage)this.detailsVBox.getScene().getWindow();
+        BaseDataTransactionTableViewController controller = loader.getController();
+        controller.initData(baseName);
+        window.initOwner(ownerStage);
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+        window.setScene(baseDataTransactionTableView);
+        window.setTitle(baseName + " - Transactions");
+        window.setResizable(false);
+        window.showAndWait();
     }
 }
