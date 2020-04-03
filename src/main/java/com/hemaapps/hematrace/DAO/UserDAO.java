@@ -3,6 +3,7 @@ package com.hemaapps.hematrace.DAO;
 //Begin Subclass UserDAO
 
 import com.hemaapps.hematrace.Database.DatabaseService;
+import com.hemaapps.hematrace.Model.User;
 import com.hemaapps.hematrace.utilities.PasswordUtilities;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -37,6 +38,11 @@ public class UserDAO {
                 dataTypes.toArray(new String[dataTypes.size()]));
 
         return loggedin;
+    }
+    
+    public static boolean insertUser(User user) {
+        System.out.println("WHAT WHAT!?");
+        return true;
     }
     
     public static boolean validateCrewUser(String userId) throws SQLException, ParseException {

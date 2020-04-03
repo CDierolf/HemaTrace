@@ -35,7 +35,7 @@ public class PasswordUtilities {
     }
     
     
-    public String getHashedPassword(String pw) throws NoSuchAlgorithmException {
+    public static String getHashedPassword(String pw) throws NoSuchAlgorithmException {
         // Create MessageDigest instance for MD5
         MessageDigest md = MessageDigest.getInstance("MD5");
         //Add password bytes to digest

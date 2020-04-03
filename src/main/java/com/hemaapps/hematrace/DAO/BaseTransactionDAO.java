@@ -44,6 +44,11 @@ public class BaseTransactionDAO extends DatabaseService{
         this.parseTransactionResultSet();
     }
     
+    public void setAllTransactions() throws SQLException {
+        this.getTransactions();
+        this.parseTransactionResultSet();
+    }
+    
     public void setBaseId(int baseId) {
         this.baseId = baseId;
     }
@@ -72,6 +77,10 @@ public class BaseTransactionDAO extends DatabaseService{
         return this.transactionList;
     }
 
+    /**
+     * Get transactions based on baseID
+     * @param baseId 
+     */
     private void getTransactions(int baseId) {
         setBaseId(baseId);
         List<String> baseValues = new ArrayList<>();
@@ -92,7 +101,28 @@ public class BaseTransactionDAO extends DatabaseService{
 
         this.setTransactionResultSet(rs);
     }
+    
+    /**
+     * Get transactions all transactions
+     */
+    private void getTransactions() {
+        List<String> baseValues = new ArrayList<>();
+        List<String> dataTypes = new ArrayList<>();
+        DatabaseService db = new DatabaseService();
 
+        String query = "{call [sp_retrieveAllTransactionData] }";
+        ResultSet rs = null;
+
+        try {
+            rs = db.callableStatementRs(query, baseValues.toArray(new String[baseValues.size()]),
+                    dataTypes.toArray(new String[dataTypes.size()]));
+        } catch (SQLException ex) {
+            log.error("ERROR: ", ex);
+        }
+
+        this.setTransactionResultSet(rs);
+    
+    }
     private void parseTransactionResultSet() throws SQLException {
         ResultSet rs = this.getTransactionResultSet();
         if (rs != null) {
