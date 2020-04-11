@@ -6,21 +6,27 @@
 package com.hemaapps.hematrace.UserToolsControllers;
 
 import com.hemaapps.hematrace.DAO.UserDAO;
+import com.hemaapps.hematrace.DashboardViewControllers.AdminToolsViewController;
 import com.hemaapps.hematrace.Model.User;
 import com.hemaapps.hematrace.utilities.Alerts;
 import com.hemaapps.hematrace.utilities.FormUtils;
 import com.hemaapps.hematrace.utilities.PasswordUtilities;
+import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
@@ -29,17 +35,31 @@ import javafx.stage.Stage;
  * @author pis7ftw
  */
 public class NewUserViewController implements Initializable {
-
-    @FXML private TextField firstNameTextField;
-    @FXML private TextField lastNameTextField;
-    @FXML private TextField emailTextField;
-    @FXML private TextField userNameTextField;
-    @FXML private TextField passwordTextField;
-    @FXML private TextField userIdTextField;
-    @FXML private Button addUserButton;
-    @FXML private Button closeButton;
-   
+    
+    @FXML
+    private TextField firstNameTextField;
+    @FXML
+    private TextField lastNameTextField;
+    @FXML
+    private TextField emailTextField;
+    @FXML
+    private TextField userNameTextField;
+    @FXML
+    private PasswordField passwordTextField;
+    @FXML
+    private TextField crewIdTextField;
+    @FXML
+    private Button addUserButton;
+    @FXML
+    private Button closeButton;
+    @FXML
+    private Button doneButton;
+    @FXML
+    private AnchorPane userToolsAnchorPane;
+    
     private List<Node> nodeList = new ArrayList<>();
+    private AdminToolsViewController adminToolsViewController;
+
     /**
      * Initializes the controller class.
      */
@@ -48,7 +68,7 @@ public class NewUserViewController implements Initializable {
         populateNodeList();
     }    
     
-    public void handleAddUserButtonClicked() throws NoSuchAlgorithmException {
+    public void handleAddUserButtonClicked() throws NoSuchAlgorithmException, SQLException, IOException {
         if (FormUtils.validateAllFieldsFilled(nodeList)) {
             User user = new User();
             user.setFirstName(this.firstNameTextField.getText());
@@ -57,15 +77,20 @@ public class NewUserViewController implements Initializable {
             user.setUsername(this.userNameTextField.getText());
             String hashedPassword = PasswordUtilities.getHashedPassword(this.passwordTextField.getText());
             user.setPassword(hashedPassword);
-            user.setUserId(this.userIdTextField.getText());
+            user.setCrewId(this.crewIdTextField.getText());
             UserDAO.insertUser(user);
+            FormUtils.clearTextPasswordFields(nodeList);
         } else {
             Alerts alerts;
             alerts = new Alerts(Alert.AlertType.ERROR, "Please ensure all fields are filled out before continuing.",
-                    "Checkn the form, fill out all required information and try again.", "If you have received this message in error"
-                            + ", contact the blood bank administrator.");
+                    "Check the form, fill out all required information and try again.", "If you have received this message in error"
+                    + ", contact the blood bank administrator.");
             alerts.showGenericAlert();
         }
+    }
+    
+    public void setAdminToolsViewController(AdminToolsViewController adminToolsViewController) {
+        this.adminToolsViewController = adminToolsViewController;
     }
     
     public void handleCloseButtonClicked() {
@@ -78,6 +103,26 @@ public class NewUserViewController implements Initializable {
         this.nodeList.add(this.emailTextField);
         this.nodeList.add(this.userNameTextField);
         this.nodeList.add(this.passwordTextField);
-        this.nodeList.add(this.userIdTextField);
+        this.nodeList.add(this.crewIdTextField);
+    }
+    
+    private void closeNewUserView() {
+        this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+    }
+    
+    private void openUserToolsView() throws IOException {
+        closeNewUserView();
+        this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../UserToolsView.fxml"));
+        this.userToolsAnchorPane = loader.load();
+        UserToolsViewController controller = loader.getController();
+        controller.setAdminToolsController(this.adminToolsViewController);
+        this.adminToolsViewController.dynamicViewPane.getChildren().add(userToolsAnchorPane);
+    }
+    
+    public void handleDoneButtonClicked() throws IOException {
+        closeNewUserView();
+        openUserToolsView();
     }
 }

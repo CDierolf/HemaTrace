@@ -5,17 +5,28 @@
  */
 package com.hemaapps.hematrace.UserToolsControllers;
 
+import com.hemaapps.hematrace.DAO.UserDAO;
+import com.hemaapps.hematrace.DashboardViewControllers.AdminToolsViewController;
 import com.hemaapps.hematrace.Model.Transaction;
 import com.hemaapps.hematrace.Model.User;
+import com.hemaapps.hematrace.utilities.FormUtils;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -24,22 +35,47 @@ import javafx.scene.control.cell.PropertyValueFactory;
  */
 public class UserToolsViewController implements Initializable {
 
-    @FXML private TableView userTableView;
-    
-    
-    private List<User> userList = new ArrayList<User>();
+    @FXML
+    private TableView userTableView;
+    @FXML
+    private Button addUserButton;
+    @FXML
+    private Button closeButton;
+    @FXML
+    private AnchorPane newUserAnchorPane;
+
+    private ObservableList<User> userList = FXCollections.observableArrayList();
+    private UserDAO userDao;
+    private AdminToolsViewController adminToolsViewController;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-       // get list of users from db
-       // populate table view with list of users
-    }    
-    
+        try {
+            this.userList = UserDAO.getUsers();
+            adjustTableView();
+            addTableViewData();
+            System.out.println("USER LIST SIZE: " + userList.size());
+        } catch (SQLException ex) {
+            Logger.getLogger(UserToolsViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     /**
-     * Modifies global settings for the BaseDataTransactionTableView transactionTableView
+     * Maintain an instance of the AdminToolsViewController in order to change
+     * the dynamicViewPane's scenes
+     *
+     * @param adminToolsViewController
+     */
+    public void setAdminToolsController(AdminToolsViewController adminToolsViewController) {
+        this.adminToolsViewController = adminToolsViewController;
+    }
+
+    /**
+     * Modifies global settings for the BaseDataTransactionTableView
+     * transactionTableView
      */
     private void adjustTableView() {
         userTableView.setEditable(false);
@@ -58,19 +94,44 @@ public class UserToolsViewController implements Initializable {
         TableColumn<String, Transaction> usernameColumn = new TableColumn<>("UserName");
         TableColumn<String, Transaction> userIdColumn = new TableColumn<>("UserID");
 
-        dbUserIdColumn.setCellValueFactory(new PropertyValueFactory<>("transactionId"));
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("productId"));
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("base"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("crewmember"));
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("donorNumber"));
-        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("productType"));
+        dbUserIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("crewId"));
         userTableView.getColumns().addAll(dbUserIdColumn, firstNameColumn, lastNameColumn,
                 emailColumn, userIdColumn);
 
         for (User u : userList) {
             userTableView.getItems().add(u);
         }
+    }
+
+    /**
+     * Accesses the AdminToolsViewController's dynamicViewPane to alter the
+     * scenes
+     *
+     * @throws IOException
+     */
+    public void handleAddUserButtonClicked() throws IOException {
+        closeUserToolsView();
+        this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../NewUserView.fxml"));
+        this.newUserAnchorPane = loader.load();
+        NewUserViewController controller = loader.getController();
+        controller.setAdminToolsViewController(this.adminToolsViewController);
+        this.adminToolsViewController.dynamicViewPane.getChildren().add(newUserAnchorPane);
 
     }
-    
+
+    public void handleCloseButtonClicked() {
+        FormUtils.closeWindow((Stage) this.closeButton.getScene().getWindow());
+    }
+
+    private void closeUserToolsView() {
+        this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+    }
+
 }

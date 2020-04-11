@@ -3,11 +3,11 @@ package com.hemaapps.hematrace.Model;
 import java.util.Date;
 
 /** 
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.Model
  * @Date: Feb 4, 2020
- * @Subclass PlasmaImpl Description: 
+ * @Subclass PlasmaImpl Description: Implementation of the BloodProduct interface
  */
 //Imports
 

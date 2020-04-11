@@ -1,11 +1,11 @@
 package com.hemaapps.hematrace.Model;
 
 /** 
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.Model
  * @Date: Feb 4, 2020
- * @Subclass User Description: 
+ * @Subclass User Description:  User Object
  */
 //Imports
 
@@ -17,6 +17,7 @@ public class User {
     private String username;
     private String password;
     private String userId;
+    private String crewId;
     
     public User() {}
     public User(String userId) {
@@ -80,6 +81,13 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    
+    public String getCrewId() {
+        return crewId;
+    }
+    public void setCrewId(String crewId) {
+        this.crewId = crewId;
     }
     
     

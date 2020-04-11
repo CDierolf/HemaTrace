@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -35,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.TransactionViewControllers
  * @Date: Feb 18, 2020

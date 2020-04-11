@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 13, 2020
- * @Subclass BaseTransactionDAO Description:
+ * @Subclass BaseTransactionDAO Description: Base Transaction Data Access Object
  */
 //Imports
 //Begin Subclass BaseTransactionDAO
@@ -123,6 +123,10 @@ public class BaseTransactionDAO extends DatabaseService{
         this.setTransactionResultSet(rs);
     
     }
+    /**
+     * Parses the transaction result set and adds to the transactionList
+     * @throws SQLException 
+     */
     private void parseTransactionResultSet() throws SQLException {
         ResultSet rs = this.getTransactionResultSet();
         if (rs != null) {
@@ -154,6 +158,10 @@ public class BaseTransactionDAO extends DatabaseService{
 
     }
     
+    /**
+     * SQL - Retrieve list of transaction types from lu_transaction_type table
+     * @throws SQLException 
+     */
     private void retrieveTransactionTypes() throws SQLException {
         DatabaseService db = new DatabaseService();
         db.init();
@@ -168,7 +176,11 @@ public class BaseTransactionDAO extends DatabaseService{
         }
         parseTransactionTypeResultSet(rs);
     }
-    
+    /**
+     * Parses the returned transaction type resultset
+     * @param rs
+     * @throws SQLException 
+     */
     private void parseTransactionTypeResultSet(ResultSet rs) throws SQLException {
         if (rs != null) {
             log.info("Parsing transaction type result set.");
@@ -186,6 +198,12 @@ public class BaseTransactionDAO extends DatabaseService{
         
     }
     
+    /**
+     * SQL - inserts a transaction into the transaction table
+     * @param transaction
+     * @return
+     * @throws SQLException 
+     */
     public boolean insertTransaction(Transaction transaction) throws SQLException {
         int successfulTransaction;
         ArrayList<String> tValues = new ArrayList<>();

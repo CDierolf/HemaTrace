@@ -35,8 +35,8 @@ import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML: BaseDataView.FXML
+ * @author Christopher Dierolf
  */
 public class BaseDataViewController implements Initializable {
 

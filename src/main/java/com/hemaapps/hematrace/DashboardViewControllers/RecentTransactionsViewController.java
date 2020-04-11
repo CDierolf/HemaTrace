@@ -26,8 +26,8 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML: RecentTransactionsView.FXML
+ * @author Christopher Dierolf
  */
 public class RecentTransactionsViewController implements Initializable {
 

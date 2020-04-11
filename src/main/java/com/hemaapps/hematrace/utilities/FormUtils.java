@@ -3,6 +3,7 @@ package com.hemaapps.hematrace.utilities;
 import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -43,6 +44,16 @@ public class FormUtils {
         }
         
         return valid;
+    }
+    public static void clearTextPasswordFields(List<Node> nodeList) {
+        for (Node n : nodeList) {
+            if (n instanceof TextField) {
+                ((TextField) n).clear();
+            }
+            if (n instanceof PasswordField) {
+                ((PasswordField) n).clear();
+            }
+        }
     }
 
 } //End Subclass FormUtils

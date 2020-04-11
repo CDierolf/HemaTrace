@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML : AdminDashboardView.fxml
+ * @author Christopher Dierolf
  */
 public class AdminDashboardViewController implements Initializable {
 
@@ -103,7 +103,11 @@ public class AdminDashboardViewController implements Initializable {
         adminToolsButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
-                handleAdminToolsButtonClicked();
+                try {
+                    handleAdminToolsButtonClicked();
+                } catch (IOException ex) {
+                    Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         logoutButton.setOnMouseEntered(MouseEvent -> {
@@ -146,7 +150,7 @@ public class AdminDashboardViewController implements Initializable {
         Parent baseDataTransactionTableViewParent = loader.load();
         Scene baseDataTransactionTableView = new Scene(baseDataTransactionTableViewParent);
         Stage window = new Stage();
-        Stage ownerStage = (Stage)this.leftVBox.getScene().getWindow();
+        Stage ownerStage = (Stage) this.leftVBox.getScene().getWindow();
         RecentTransactionsViewController controller = loader.getController();
         window.initOwner(ownerStage);
         window.initModality(Modality.APPLICATION_MODAL);
@@ -160,16 +164,29 @@ public class AdminDashboardViewController implements Initializable {
     private void handleLogoutButtonClicked() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("../AdminLoginView.fxml"));
-        Parent baseLoginViewParent = loader.load();
-        Scene baseLoginView = new Scene(baseLoginViewParent);
+        Parent adminLoginViewParent = loader.load();
+        Scene adminLoginView = new Scene(adminLoginViewParent);
         Stage window = (Stage) this.logoutButton.getScene().getWindow();
-        window.setScene(baseLoginView);
+        window.setScene(adminLoginView);
         window.setTitle("HemaTrace - Admin Login");
         window.setResizable(false);
-        window.show();
+        window.showAndWait();
     }
 
-    private void handleAdminToolsButtonClicked() {
-
+    private void handleAdminToolsButtonClicked() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../AdminToolsView.fxml"));
+        Parent adminToolsViewParent = loader.load();
+        Scene adminToolsView = new Scene(adminToolsViewParent);
+        Stage window = new Stage();
+        Stage ownerStage = (Stage) this.leftVBox.getScene().getWindow();
+        AdminToolsViewController controller = loader.getController();
+        window.initOwner(ownerStage);
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.DECORATED);
+        window.setScene(adminToolsView);
+        window.setTitle("Administrative Tools");
+        window.setResizable(false);
+        window.showAndWait();
     }
 }

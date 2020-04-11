@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  *
- * @author pis7ftw
+ * @author Christopher Dierolf
  */
 public interface BloodProduct {
     

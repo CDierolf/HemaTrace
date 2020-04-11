@@ -30,7 +30,7 @@ import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
- *
+ * FXML: BaseDataTranasctionTableView.FXML
  * @author Christopher Dierolf
  */
 public class BaseDataTransactionTableViewController implements Initializable {

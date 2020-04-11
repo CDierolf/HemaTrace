@@ -26,8 +26,8 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML: BaseInformationView.FXML
+ * @author Christopher Dierolf
  */
 public class BaseInformationViewController implements Initializable {
 
