@@ -23,7 +23,7 @@
          <children>
             <VBox alignment="CENTER" prefHeight="137.0" prefWidth="133.0" spacing="10.0">
                <children>
-                  <Circle fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
+                  <Circle fx:id="adminToolsButton" fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
                   <Label text="Administrative Tools" textAlignment="CENTER" wrapText="true" />
                </children>
                <padding>
@@ -32,13 +32,13 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="137.0" prefWidth="127.0" spacing="10.0">
                <children>
-                  <Circle fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
+                  <Circle fx:id="recentTransactionsButton" fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
                   <Label text="View Recent Transactions" textAlignment="CENTER" wrapText="true" />
                </children>
             </VBox>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                <children>
-                  <Circle fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
+                  <Circle fx:id="logoutButton" fill="WHITE" radius="23.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle" />
                   <Label text="Logout" textAlignment="CENTER" wrapText="true" />
                </children>
                <padding>

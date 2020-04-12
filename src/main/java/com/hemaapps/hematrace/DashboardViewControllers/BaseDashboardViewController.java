@@ -47,7 +47,7 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
+ * FXML: BaseDashboardViewController.fxml
  * @author Christopher K. Dierolf
  */
 public class BaseDashboardViewController implements Initializable {

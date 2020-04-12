@@ -1,11 +1,11 @@
 package com.hemaapps.hematrace.Model;
 
 /** 
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.Model
  * @Date: Feb 20, 2020
- * @Subclass TransactionType Description: 
+ * @Subclass TransactionType Description:  TransactionType object
  */
 //Imports
 

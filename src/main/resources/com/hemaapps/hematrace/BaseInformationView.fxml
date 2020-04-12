@@ -47,5 +47,6 @@
       <Button fx:id="editButton" layoutX="17.0" layoutY="300.0" mnemonicParsing="false" onAction="#handleEditButtonClicked" prefHeight="27.0" prefWidth="64.0" text="Edit" />
       <Button fx:id="closeButton" layoutX="534.0" layoutY="300.0" mnemonicParsing="false" onAction="#handleCloseButtonClicked" text="Close" />
       <Separator layoutX="17.0" layoutY="265.0" prefHeight="17.0" prefWidth="581.0" />
+      <Label fx:id="updateSuccessLabel" layoutX="257.0" layoutY="305.0" text="Update successful" visible="false" />
    </children>
 </AnchorPane>

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 
 /**
- * JavaFX App
+ * Entry point for the HemaTrace application.
  */
 public class App extends Application {
 

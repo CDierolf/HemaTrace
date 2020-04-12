@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 13, 2020
- * @Subclass BaseTransactionDAO Description:
+ * @Subclass BaseTransactionDAO Description: Base Transaction Data Access Object
  */
 //Imports
 //Begin Subclass BaseTransactionDAO
@@ -41,6 +41,11 @@ public class BaseTransactionDAO extends DatabaseService{
     
     public void setTransactions() throws SQLException {
         this.getTransactions(this.getBaseId());
+        this.parseTransactionResultSet();
+    }
+    
+    public void setAllTransactions() throws SQLException {
+        this.getTransactions();
         this.parseTransactionResultSet();
     }
     
@@ -72,6 +77,10 @@ public class BaseTransactionDAO extends DatabaseService{
         return this.transactionList;
     }
 
+    /**
+     * Get transactions based on baseID
+     * @param baseId 
+     */
     private void getTransactions(int baseId) {
         setBaseId(baseId);
         List<String> baseValues = new ArrayList<>();
@@ -92,7 +101,32 @@ public class BaseTransactionDAO extends DatabaseService{
 
         this.setTransactionResultSet(rs);
     }
+    
+    /**
+     * Get transactions all transactions
+     */
+    private void getTransactions() {
+        List<String> baseValues = new ArrayList<>();
+        List<String> dataTypes = new ArrayList<>();
+        DatabaseService db = new DatabaseService();
 
+        String query = "{call [sp_retrieveAllTransactionData] }";
+        ResultSet rs = null;
+
+        try {
+            rs = db.callableStatementRs(query, baseValues.toArray(new String[baseValues.size()]),
+                    dataTypes.toArray(new String[dataTypes.size()]));
+        } catch (SQLException ex) {
+            log.error("ERROR: ", ex);
+        }
+
+        this.setTransactionResultSet(rs);
+    
+    }
+    /**
+     * Parses the transaction result set and adds to the transactionList
+     * @throws SQLException 
+     */
     private void parseTransactionResultSet() throws SQLException {
         ResultSet rs = this.getTransactionResultSet();
         if (rs != null) {
@@ -124,6 +158,10 @@ public class BaseTransactionDAO extends DatabaseService{
 
     }
     
+    /**
+     * SQL - Retrieve list of transaction types from lu_transaction_type table
+     * @throws SQLException 
+     */
     private void retrieveTransactionTypes() throws SQLException {
         DatabaseService db = new DatabaseService();
         db.init();
@@ -138,7 +176,11 @@ public class BaseTransactionDAO extends DatabaseService{
         }
         parseTransactionTypeResultSet(rs);
     }
-    
+    /**
+     * Parses the returned transaction type resultset
+     * @param rs
+     * @throws SQLException 
+     */
     private void parseTransactionTypeResultSet(ResultSet rs) throws SQLException {
         if (rs != null) {
             log.info("Parsing transaction type result set.");
@@ -156,6 +198,12 @@ public class BaseTransactionDAO extends DatabaseService{
         
     }
     
+    /**
+     * SQL - inserts a transaction into the transaction table
+     * @param transaction
+     * @return
+     * @throws SQLException 
+     */
     public boolean insertTransaction(Transaction transaction) throws SQLException {
         int successfulTransaction;
         ArrayList<String> tValues = new ArrayList<>();

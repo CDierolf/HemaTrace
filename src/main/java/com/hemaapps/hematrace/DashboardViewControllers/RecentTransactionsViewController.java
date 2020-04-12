@@ -1,74 +1,59 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.hemaapps.hematrace.DashboardViewControllers;
 
-import com.hemaapps.hematrace.DAO.BaseDAO;
 import com.hemaapps.hematrace.DAO.BaseTransactionDAO;
 import com.hemaapps.hematrace.Model.Transaction;
 import com.hemaapps.hematrace.utilities.FormUtils;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
- * FXML: BaseDataTranasctionTableView.FXML
+ * FXML: RecentTransactionsView.FXML
  * @author Christopher Dierolf
  */
-public class BaseDataTransactionTableViewController implements Initializable {
+public class RecentTransactionsViewController implements Initializable {
 
-    @FXML
-    private Button closeButton;
-    @FXML
-    private Button baseInfoButton;
     @FXML
     private TableView transactionTableView;
     @FXML
-    private AnchorPane root;
-    @FXML
-    private ScrollPane tableViewScrollPane;
-
-    private BaseDAO baseDao;
-    private BaseTransactionDAO baseTransactionDAO = new BaseTransactionDAO();
-    private ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
-    private String baseName;
-    private int baseId;
-
+    private Button closeButton;
+    
+    
+    private BaseTransactionDAO baseTransactionDAO;
+    private List<Transaction> transactionList = new ArrayList<>();
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            baseDao = BaseDAO.getInstance();
+            baseTransactionDAO = new BaseTransactionDAO();
+            initData();
         } catch (SQLException ex) {
-            Logger.getLogger(BaseDataTransactionTableViewController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecentTransactionsViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }    
+    
+    public void initData() throws SQLException {
 
-    public void initData(String baseName) throws SQLException {
-        this.baseName = baseName;
-        System.out.println("BASENAME: " + baseName);
-        this.baseId = baseDao.getBaseIdFromMap(baseName);
-        System.out.println("BASEID: " + baseId);
         getTransactionData();
         adjustTableView();
         addTableViewData();
@@ -81,8 +66,7 @@ public class BaseDataTransactionTableViewController implements Initializable {
      * @throws SQLException
      */
     private void getTransactionData() throws SQLException {
-        baseTransactionDAO.setBaseId(this.baseId);
-        baseTransactionDAO.setTransactions();
+        baseTransactionDAO.setAllTransactions();
         this.transactionList = baseTransactionDAO.getTransactionList();
     }
 
@@ -130,22 +114,4 @@ public class BaseDataTransactionTableViewController implements Initializable {
         FormUtils.closeWindow((Stage) this.closeButton.getScene().getWindow());
     }
     
-    public void handleBaseInformationButtonClicked() throws SQLException, IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("../BaseInformationView.fxml"));
-        Parent baseInfoViewParent = loader.load();
-        Scene baseInfoView = new Scene(baseInfoViewParent);
-        Stage window = new Stage();
-        Stage ownerStage = (Stage)this.baseInfoButton.getScene().getWindow();
-        BaseInformationViewController controller = loader.getController();
-        controller.initData(baseName);
-        window.initOwner(ownerStage);
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.initStyle(StageStyle.UNDECORATED);
-        window.setScene(baseInfoView);
-        window.setTitle(baseName + " - Information");
-        window.setResizable(false);
-        window.showAndWait();
-    }
-
 }

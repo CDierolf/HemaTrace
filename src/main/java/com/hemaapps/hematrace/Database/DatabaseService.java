@@ -149,7 +149,6 @@ public class DatabaseService {
             }
             cs.execute();
             returnValue = cs.getInt(inputs.length + 1);
-            close();
         } catch (Exception e) {
             //String module, String query, Boolean exit, String error
             e.printStackTrace();

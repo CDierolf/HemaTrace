@@ -78,8 +78,6 @@ public class CrewIdentificationViewController implements Initializable{
             
             closeWindow();
             
-            
-            
         } else {
             alerts = new Alerts(Alert.AlertType.ERROR, "Identification is not valid or user is not authorized.",
                     "You must provide a valid crew id.", "In order to proceed, please ensure"

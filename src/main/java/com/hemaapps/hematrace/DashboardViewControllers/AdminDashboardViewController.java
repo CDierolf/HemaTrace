@@ -15,18 +15,26 @@ import java.text.ParseException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.LoggerFactory;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML : AdminDashboardView.fxml
+ * @author Christopher Dierolf
  */
 public class AdminDashboardViewController implements Initializable {
 
@@ -40,6 +48,12 @@ public class AdminDashboardViewController implements Initializable {
     private VBox leftVBox;
     @FXML
     private VBox rightVBox;
+    @FXML
+    private Circle adminToolsButton;
+    @FXML
+    private Circle recentTransactionsButton;
+    @FXML
+    private Circle logoutButton;
 
     /**
      * Initializes the controller class.
@@ -57,6 +71,7 @@ public class AdminDashboardViewController implements Initializable {
         } catch (ParseException ex) {
             Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        setHandlers();
     }
 
     public void loadUI() throws IOException, SQLException, ParseException {
@@ -75,5 +90,103 @@ public class AdminDashboardViewController implements Initializable {
                 rightVBox.getChildren().add(pane);
             }
         }
+    }
+
+    private void setHandlers() {
+        // Change the shape color of the top buttons
+        adminToolsButton.setOnMouseEntered(MouseEvent -> {
+            adminToolsButton.setStyle("-fx-fill: #000");
+        });
+        adminToolsButton.setOnMouseExited(MouseEvent -> {
+            adminToolsButton.setStyle("-fx-fille: #111");
+        });
+        adminToolsButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent MouseEvent) {
+                try {
+                    handleAdminToolsButtonClicked();
+                } catch (IOException ex) {
+                    Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        logoutButton.setOnMouseEntered(MouseEvent -> {
+            logoutButton.setStyle("-fx-fill: #000");
+        });
+        logoutButton.setOnMouseExited(MouseEvent -> {
+            logoutButton.setStyle("-fx-fill: #000");
+        });
+        logoutButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent MouseEvent) {
+                try {
+                    handleLogoutButtonClicked();
+                } catch (IOException ex) {
+                    Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        recentTransactionsButton.setOnMouseEntered(MouseEvent -> {
+            recentTransactionsButton.setStyle("-fx-fill: #000");
+        });
+        recentTransactionsButton.setOnMouseExited(MouseEvent -> {
+            recentTransactionsButton.setStyle("-fx-fille: #111");
+        });
+        recentTransactionsButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent MouseEvent) {
+                try {
+                    handleRecentTransactionsClicked();
+                } catch (IOException ex) {
+                    Logger.getLogger(AdminDashboardViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    private void handleRecentTransactionsClicked() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../RecentTransactionsView.fxml"));
+        Parent baseDataTransactionTableViewParent = loader.load();
+        Scene baseDataTransactionTableView = new Scene(baseDataTransactionTableViewParent);
+        Stage window = new Stage();
+        Stage ownerStage = (Stage) this.leftVBox.getScene().getWindow();
+        RecentTransactionsViewController controller = loader.getController();
+        window.initOwner(ownerStage);
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+        window.setScene(baseDataTransactionTableView);
+        window.setTitle("Base-wide recent transactions");
+        window.setResizable(false);
+        window.showAndWait();
+    }
+
+    private void handleLogoutButtonClicked() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../AdminLoginView.fxml"));
+        Parent adminLoginViewParent = loader.load();
+        Scene adminLoginView = new Scene(adminLoginViewParent);
+        Stage window = (Stage) this.logoutButton.getScene().getWindow();
+        window.setScene(adminLoginView);
+        window.setTitle("HemaTrace - Admin Login");
+        window.setResizable(false);
+        window.showAndWait();
+    }
+
+    private void handleAdminToolsButtonClicked() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../AdminToolsView.fxml"));
+        Parent adminToolsViewParent = loader.load();
+        Scene adminToolsView = new Scene(adminToolsViewParent);
+        Stage window = new Stage();
+        Stage ownerStage = (Stage) this.leftVBox.getScene().getWindow();
+        AdminToolsViewController controller = loader.getController();
+        window.initOwner(ownerStage);
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.DECORATED);
+        window.setScene(adminToolsView);
+        window.setTitle("Administrative Tools");
+        window.setResizable(false);
+        window.showAndWait();
     }
 }

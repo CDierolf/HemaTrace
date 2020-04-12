@@ -18,16 +18,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
- * @author pis7ftw
+ * FXML: BaseInformationView.FXML
+ * @author Christopher Dierolf
  */
 public class BaseInformationViewController implements Initializable {
 
@@ -47,12 +47,15 @@ public class BaseInformationViewController implements Initializable {
     private Button editButton;
     @FXML
     private Button closeButton;
+    @FXML
+    private Label updateSuccessLabel;
 
     private BaseDAO baseDao;
     private Base base;
     private Alerts alerts = new Alerts();
     private boolean formEditableFlag = false;
     private List<TextField> fieldList = new ArrayList<>();
+    private int baseId;
 
     /**
      * Initializes the controller class.
@@ -73,7 +76,7 @@ public class BaseInformationViewController implements Initializable {
      * @param baseId
      */
     public void initData(String baseName) {
-        int baseId = baseDao.getBaseIdFromMap(baseName);
+        this.baseId = baseDao.getBaseIdFromMap(baseName);
         this.base = baseDao.getBaseInfoFromList(baseId);
         populateFieldList();
         if (base == null) {
@@ -96,7 +99,6 @@ public class BaseInformationViewController implements Initializable {
     }
 
     private void populateFieldList() {
-        this.fieldList.add(baseIdTextField);
         this.fieldList.add(baseNameTextField);
         this.fieldList.add(baseAddressTextField);
         this.fieldList.add(baseCityTextField);
@@ -108,12 +110,35 @@ public class BaseInformationViewController implements Initializable {
         FormUtils.closeWindow((Stage) this.baseAddressTextField.getScene().getWindow());
     }
 
-    public void handleEditButtonClicked() {
+    public void handleEditButtonClicked() throws SQLException {
         formEditableFlag = !formEditableFlag;
-
+        
+        if (formEditableFlag) {
+            this.editButton.setText("Save");
+            this.updateSuccessLabel.setVisible(false);
+        } else {
+            this.editButton.setText("Edit");
+            Base base = new Base();
+            base.setBase_id(baseId);
+            base.setName(this.baseNameTextField.getText());
+            base.setAddress(this.baseAddressTextField.getText());
+            base.setCity(this.baseCityTextField.getText());
+            base.setState(this.baseStateTextField.getText());
+            base.setZipCode(this.baseZipTextField.getText());
+            boolean updateSuccessful = baseDao.updateBaseInfo(base);
+            if (updateSuccessful) {
+                this.updateSuccessLabel.setVisible(true);
+//                resetData();
+            }
+        }
         fieldList.forEach((t) -> {
             t.setEditable(formEditableFlag);
         });
     }
-
+    
+    private void resetData() throws SQLException {
+        baseDao = BaseDAO.getInstance();
+        this.base = baseDao.getBaseInfoFromList(baseId);
+        populateData();
+    }
 }

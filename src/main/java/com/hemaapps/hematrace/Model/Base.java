@@ -12,7 +12,7 @@ package com.hemaapps.hematrace.Model;
 //Begin Subclass Base
 public class Base {
     
-    private int base_id;
+    private Integer base_id;
     private String name;
     private String address;
     private String city;
@@ -65,6 +65,11 @@ public class Base {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+    
+    @Override
+    public String toString() {
+        return "Base{" + "base_id=" + base_id + ", name=" + name + ", address=" + address + ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + '}';
     }
 
 } //End Subclass Base

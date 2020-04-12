@@ -18,9 +18,16 @@ and open the template in the editor.
 }
 
 .label {
-    -fx-font: 45px 'Arial'
+    -fx-font: 45px 'Arial';
+    -fx-text-fill: #FFF;
+        
 }
 
+#labelTextField {
+    -fx-font: 16px 'Arial-Bold';
+    -fx-text-fill: #FFF;
+        
+}
 
 #adminLoginButton:hover {
     -fx-text-fill: #99773D;

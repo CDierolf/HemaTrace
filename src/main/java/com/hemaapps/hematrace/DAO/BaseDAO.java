@@ -7,15 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 11, 2020
- * @Subclass BaseDAO Description:
+ * @Subclass BaseDAO Description: Base Data Access Object - Singleton.
  */
 //Imports
 //Begin Subclass BaseDAO
@@ -33,8 +35,8 @@ public class BaseDAO {
     public static void setSingle_instance(BaseDAO single_instance) {
         BaseDAO.single_instance = single_instance;
     }
-    
-    private static List<Base> bases = new ArrayList<>();
+
+    private static ObservableList<Base> bases = FXCollections.observableArrayList();
     private static HashMap<String, Integer> baseMap = new HashMap<>();
     private static List<String> baseNames = new ArrayList<>();
     private static final DatabaseService db = new DatabaseService();
@@ -54,6 +56,7 @@ public class BaseDAO {
 
         return single_instance;
     }
+
     public String getBaseValue() {
         return baseValue;
     }
@@ -61,7 +64,7 @@ public class BaseDAO {
     public void setBaseValue(String baseValue) {
         BaseDAO.baseValue = baseValue;
     }
-    
+
     public int getBaseIdForInstance() {
         return baseIdForInstance;
     }
@@ -82,6 +85,12 @@ public class BaseDAO {
         return this.baseMap;
     }
 
+    /**
+     * Singleton Instance - when the base name is selected at login
+     * set the base Id.
+     * @param baseName
+     * @return 
+     */
     public int getBaseIdFromMapWithBaseNameSetInstance(String baseName) {
         if (baseMap.containsKey(baseName)) {
             this.setBaseIdForInstance(baseMap.get(baseName));
@@ -90,6 +99,11 @@ public class BaseDAO {
             return 0;
         }
     }
+    /**
+     * Retrieve the base Id given the base name
+     * @param baseName
+     * @return 
+     */
     public int getBaseIdFromMap(String baseName) {
         if (baseMap.containsKey(baseName.toLowerCase())) {
             return baseMap.get(baseName.toLowerCase());
@@ -97,7 +111,12 @@ public class BaseDAO {
             return 0;
         }
     }
-    
+
+    /**
+     * Retrieve the base data given the base Id
+     * @param baseId
+     * @return 
+     */
     public Base getBaseInfoFromList(int baseId) {
         Base base = null;
         for (Base b : bases) {
@@ -109,6 +128,10 @@ public class BaseDAO {
         return base;
     }
 
+    /**
+     * Populate the base list.
+     * @throws SQLException 
+     */
     private static void populateBaseList() throws SQLException {
         db.init();
         String query = "{ call [sp_retrieveBaseResultSet] }";
@@ -138,18 +161,57 @@ public class BaseDAO {
         }
     }
 
+    /**
+     * SQL call to update base information
+     * @param base
+     * @return
+     * @throws SQLException 
+     */
+    public boolean updateBaseInfo(Base base) throws SQLException {
+        ArrayList<String> tValues = new ArrayList<>();
+        ArrayList<String> tTypes = new ArrayList<>();
+        int successfulUpdate;
+
+        tValues.add(Integer.toString(base.getBase_id()));
+        tTypes.add("int");
+        tValues.add(base.getName());
+        tTypes.add("string");
+        tValues.add(base.getAddress());
+        tTypes.add("string");
+        tValues.add(base.getCity());
+        tTypes.add("string");
+        tValues.add(base.getState());
+        tTypes.add("string");
+        tValues.add(base.getZipCode());
+        tTypes.add("String");
+        log.info("BaseDAO singleton refreshed...");
+
+        db.init();
+        String q1 = "{ call [sp_updatebase](?,?,?,?,?,?,?) }";
+
+        successfulUpdate = db.callableStatementReturnInt(q1, tValues.toArray(new String[tValues.size()]),
+                tTypes.toArray(new String[tTypes.size()]));
+
+        return successfulUpdate == 0;
+    }
+
+    /**
+     * Populates the base map
+     */
     private static void populateBaseMap() {
         for (Base b : bases) {
             baseMap.put(b.getName().toLowerCase().trim(), b.getBase_id());
         }
     }
 
+    /**
+     * Populates the list of base names
+     */
     private static void populateBaseNames() {
         for (Base b : bases) {
             baseNames.add(b.getName());
         }
     }
-    
     public int getNumBaseProducts() {
         return numBaseProducts;
     }
@@ -157,8 +219,4 @@ public class BaseDAO {
     public void setNumBaseProducts(int numBaseProducts) {
         BaseDAO.numBaseProducts = numBaseProducts;
     }
-
-    
-
-
 } //End Subclass BaseDAO

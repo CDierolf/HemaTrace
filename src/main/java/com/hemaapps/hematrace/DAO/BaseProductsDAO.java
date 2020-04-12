@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @Course: SDEV 350 ~ Java Programming II
+ * @Course: SDEV 450 ~ Java Programming III
  * @Author Name: Christopher K. Dierolf
  * @Assignment Name: com.hemaapps.hematrace.DAO
  * @Date: Feb 4, 2020
@@ -105,6 +105,11 @@ public class BaseProductsDAO extends DatabaseService {
         this.resultSet = resultSet;
     }
 
+    /**
+     * SQL - returns the base product result set from the 
+     * base_product table given a base id
+     * @param baseId 
+     */
     private void getBaseProductResultSet(int baseId) {
         setBaseId(baseId);
         List<String> baseValues = new ArrayList<>();
@@ -126,6 +131,10 @@ public class BaseProductsDAO extends DatabaseService {
         this.setResultSet(rs);
     }
 
+    /**
+     * Parses through the retrieved base product result set and populates
+     * the basePlasmaProducts and basePrbcProducts lists.
+     */
     private void parseBaseProductResultSet() {
         basePlasmaProducts.clear();
         basePRBCProducts.clear();
@@ -178,6 +187,13 @@ public class BaseProductsDAO extends DatabaseService {
                 + basePlasmaProducts.size() + " products retrieved.");
     }
 
+    /**
+     * SQL - Returns the current number of products assigned to a given base.
+     * @param base
+     * @return
+     * @throws SQLException
+     * @throws ParseException 
+     */
     public int getCurrentNumberOfProductsForBase(int base) throws SQLException, ParseException {
         List<String> inputs = new ArrayList<>();
         List<String> inputDataTypes = new ArrayList<>();
@@ -196,6 +212,9 @@ public class BaseProductsDAO extends DatabaseService {
 
     }
 
+    /**
+     * SQL - Populates the disposition list from the database table lu_product_dispositions
+     */
     private static void populateDispositions() {
 
         String query = "{call [sp_retrieveProductDispositions] }";
@@ -219,6 +238,10 @@ public class BaseProductsDAO extends DatabaseService {
         }
     }
     
+    /**
+     * Populates the productTypeMap from the database.
+     * @throws SQLException 
+     */
     private static void populateProductTypes() throws SQLException {
         String query = "{call [sp_retrieveProductTypes] }";
         ResultSet rs = null;
