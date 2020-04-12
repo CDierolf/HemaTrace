@@ -100,7 +100,6 @@ public class AdminLoginViewController implements Initializable {
             AdminDashboardViewController controller = loader.getController();
             
             window.setScene(adminDashboardView);
-            // TODO get user's real first name
             window.setTitle("Welcome, " + " Administrator Dashboard");
             window.setResizable(false);
             window.show();

@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,7 +25,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -57,7 +61,6 @@ public class UserToolsViewController implements Initializable {
             this.userList = UserDAO.getUsers();
             adjustTableView();
             addTableViewData();
-            System.out.println("USER LIST SIZE: " + userList.size());
         } catch (SQLException ex) {
             Logger.getLogger(UserToolsViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -80,6 +83,7 @@ public class UserToolsViewController implements Initializable {
     private void adjustTableView() {
         userTableView.setEditable(false);
         userTableView.setStyle("-fx-alignment: CENTER");
+        addTableViewHandler();
     }
 
     /**
@@ -126,12 +130,48 @@ public class UserToolsViewController implements Initializable {
 
     }
 
+    private void addTableViewHandler() {
+        this.userTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                if (userTableView.getSelectionModel().getSelectedItem() != null) {
+                    TableViewSelectionModel selectionModel = userTableView.getSelectionModel();
+                    User user = (User)selectionModel.getSelectedItem();
+                    try {
+                        handleUserSelectedClick(user);
+                    } catch (IOException ex) {
+                        Logger.getLogger(UserToolsViewController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+    }
+
     public void handleCloseButtonClicked() {
         FormUtils.closeWindow((Stage) this.closeButton.getScene().getWindow());
     }
 
     private void closeUserToolsView() {
         this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+    }
+    
+    private void handleUserSelectedClick(User user) throws IOException {
+        closeUserToolsView();
+        this.adminToolsViewController.dynamicViewPane.getChildren().clear();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("../EditUserView.fxml"));
+        this.newUserAnchorPane = loader.load();
+        EditUserViewController controller = loader.getController();
+        controller.setSelectedUser(user);
+        controller.setAdminToolsViewController(this.adminToolsViewController);
+        controller.setUserToolsViewController(this);
+        this.adminToolsViewController.dynamicViewPane.getChildren().add(newUserAnchorPane);
+    }
+    
+    public void updateUserList() throws SQLException {
+        this.userList.clear();
+        this.userList = UserDAO.getUsers();
     }
 
 }

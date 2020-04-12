@@ -11,6 +11,7 @@ package com.hemaapps.hematrace.Model;
 
 //Begin Subclass User
 public class User {
+
     private String firstName;
     private String lastName;
     private String email;
@@ -88,6 +89,11 @@ public class User {
     }
     public void setCrewId(String crewId) {
         this.crewId = crewId;
+    }
+    
+    @Override
+    public String toString() {
+        return "User{" + "firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", username=" + username + ", password=" + password + ", userId=" + userId + ", crewId=" + crewId + '}';
     }
     
     
