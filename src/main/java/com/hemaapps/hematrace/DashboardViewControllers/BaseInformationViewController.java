@@ -11,6 +11,7 @@ import com.hemaapps.hematrace.utilities.Alerts;
 import com.hemaapps.hematrace.utilities.FormUtils;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -110,7 +111,7 @@ public class BaseInformationViewController implements Initializable {
         FormUtils.closeWindow((Stage) this.baseAddressTextField.getScene().getWindow());
     }
 
-    public void handleEditButtonClicked() throws SQLException {
+    public void handleEditButtonClicked() throws SQLException, ParseException {
         formEditableFlag = !formEditableFlag;
         
         if (formEditableFlag) {

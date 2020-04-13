@@ -77,7 +77,7 @@ public class UserDAO {
      * @return
      * @throws SQLException
      */
-    public static boolean insertUser(User user) throws SQLException {
+    public static boolean insertUser(User user) throws SQLException, ParseException {
         int successfulUserEntry;
         ArrayList<String> tValues = new ArrayList<>();
         ArrayList<String> tTypes = new ArrayList<>();
@@ -131,6 +131,7 @@ public class UserDAO {
      * @throws SQLException
      */
     public static ObservableList<User> getUsers() throws SQLException {
+        db.init();
         String q1 = "{call [sp_retrieveUsers]}";
         ObservableList<User> userList = FXCollections.observableArrayList();
         ResultSet rs = null;
@@ -161,7 +162,7 @@ public class UserDAO {
         return userList;
     }
 
-    public static boolean updateUser(User user) throws SQLException {
+    public static boolean updateUser(User user) throws SQLException, ParseException {
         int successfulUserUpdate = 0;
         ArrayList<String> tValues = new ArrayList<>();
         ArrayList<String> tTypes = new ArrayList<>();
@@ -191,7 +192,7 @@ public class UserDAO {
         return successfulUserUpdate == 1;
     }
 
-    public static boolean deleteUser(String userId) throws SQLException {
+    public static boolean deleteUser(String userId) throws SQLException, ParseException {
         int successfulUserDelete = 0;
         ArrayList<String> tValues = new ArrayList<>();
         ArrayList<String> tTypes = new ArrayList<>();

@@ -1,7 +1,6 @@
 package com.hemaapps.hematrace.DAO;
 
 import com.hemaapps.hematrace.Database.DatabaseService;
-import com.hemaapps.hematrace.Model.BloodProduct;
 import com.hemaapps.hematrace.Model.PRBCImpl;
 import com.hemaapps.hematrace.Model.PlasmaImpl;
 import java.sql.ResultSet;

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -68,7 +69,7 @@ public class NewUserViewController implements Initializable {
         populateNodeList();
     }    
     
-    public void handleAddUserButtonClicked() throws NoSuchAlgorithmException, SQLException, IOException {
+    public void handleAddUserButtonClicked() throws NoSuchAlgorithmException, SQLException, IOException, ParseException {
         if (FormUtils.validateAllFieldsFilled(nodeList)) {
             User user = new User();
             user.setFirstName(this.firstNameTextField.getText());
