@@ -67,6 +67,20 @@ public class AdminLoginViewController implements Initializable {
         }
     }
     
+    public void handleBaseLoginButtonClicked() throws IOException {
+         // Gotta go up one level to access resources
+        FXMLLoader loader = new FXMLLoader(BaseLoginViewController.class.getResource("../BaseLoginView.fxml"));
+
+        Parent baseDashboardViewParent = loader.load();
+        Scene baseDashboardView = new Scene(baseDashboardViewParent, 640, 400);
+        Stage window = (Stage) this.loginButton.getScene().getWindow();
+
+        window.setScene(baseDashboardView);
+        window.setTitle("Base Login");
+        window.setResizable(false);
+        window.show();
+    }
+    
     
     public void handleCloseButtonClicked() {
         log.info("Application is exiting from AdminLoginViewController.");

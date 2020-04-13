@@ -4,6 +4,7 @@ import com.hemaapps.hematrace.Database.DatabaseService;
 import com.hemaapps.hematrace.Model.Base;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -167,7 +168,7 @@ public class BaseDAO {
      * @return
      * @throws SQLException 
      */
-    public boolean updateBaseInfo(Base base) throws SQLException {
+    public boolean updateBaseInfo(Base base) throws SQLException, ParseException {
         ArrayList<String> tValues = new ArrayList<>();
         ArrayList<String> tTypes = new ArrayList<>();
         int successfulUpdate;

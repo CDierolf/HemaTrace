@@ -6,6 +6,7 @@ import com.hemaapps.hematrace.Model.TransactionType;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -204,7 +205,7 @@ public class BaseTransactionDAO extends DatabaseService{
      * @return
      * @throws SQLException 
      */
-    public boolean insertTransaction(Transaction transaction) throws SQLException {
+    public boolean insertTransaction(Transaction transaction) throws SQLException, ParseException {
         int successfulTransaction;
         ArrayList<String> tValues = new ArrayList<>();
         ArrayList<String> tTypes = new ArrayList<>();

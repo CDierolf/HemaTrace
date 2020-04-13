@@ -13,10 +13,12 @@ import com.hemaapps.hematrace.utilities.BloodProductValidation;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -141,7 +143,11 @@ public class TransactionViewController implements Initializable {
         }
         commitCheckInTransactionButton = new Button("Commit check-in");
         commitCheckInTransactionButton.setOnAction((ActionEvent event) -> {
-            commitCheckInTransactions();
+            try {
+                commitCheckInTransactions();
+            } catch (ParseException ex) {
+                java.util.logging.Logger.getLogger(TransactionViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         this.checkInVBox.getChildren().add(commitCheckInTransactionButton);
     }
@@ -225,7 +231,11 @@ public class TransactionViewController implements Initializable {
         }
 
         commitCheckoutTransactionButton.setOnAction((ActionEvent e) -> {
-            commitCheckOutTransactions();
+            try {
+                commitCheckOutTransactions();
+            } catch (ParseException ex) {
+                java.util.logging.Logger.getLogger(TransactionViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
@@ -282,10 +292,9 @@ public class TransactionViewController implements Initializable {
         checkOutTransactionVBoxList.get(index).getUnitTransactionTextField().setStyle(null);
     }
 
-    private void commitCheckOutTransactions() {
-        Transaction transaction = null;
+    private void commitCheckOutTransactions() throws ParseException {
         for (String s : checkOutDonorList) {
-            transaction = new Transaction();
+            Transaction transaction = new Transaction();
             transaction.setBase(Integer.toString(baseDao.getBaseIdForInstance()));
             transaction.setCrewmember(user.getUserId());
             transaction.setDonorNumber(s);
@@ -298,60 +307,50 @@ public class TransactionViewController implements Initializable {
             } catch (SQLException ex) {
                 log.error("An error occured committing the check out transactions", ex);
             }
+            this.checkInDonorList = this.checkOutDonorList;
         }
         this.commitCheckoutTransactionButton.setDisable(true);
         this.checkedOutFlag = true;
-
     }
 
-    private void commitCheckInTransactions() {
+    private void commitCheckInTransactions() throws ParseException {
         if (!dispositionsEmpty()) {
-            System.out.println("SUBMITTING TRANSACTION!");
-            Transaction transaction = null;
-            System.out.println("CHECKIN DONOR LIST SIZE: " + checkInDonorList.size());
             for (String s : checkOutDonorList) {
-                System.out.println("TRANSQCTION IN PROGRESS");
-                transaction = new Transaction();
+                Transaction transaction = new Transaction();
                 transaction.setBase(Integer.toString(baseDao.getBaseIdForInstance()));
                 transaction.setCrewmember(user.getUserId());
                 transaction.setDonorNumber(s);
                 transaction.setTransactionType("Check In");
+                transaction.setProductStatus("1"); // Check in status
                 try {
                     if (baseTransactionDao.insertTransaction(transaction)) {
                         log.info("Transaction: " + transaction + " successfully inserted.");
                     }
                 } catch (SQLException ex) {
-                    log.error("An error occured commiting the check in transactions", ex);
+                    log.error("An error occured committing the check out transactions", ex);
                 }
+                this.checkInDonorList = this.checkOutDonorList;
             }
-            
             Stage stage = (Stage) this.commitCheckInTransactionButton.getScene().getWindow();
             stage.close();
         } else {
             alerts = new Alerts(Alert.AlertType.ERROR, "One or more unit dispositions are not selected.",
-                    "Cannot commit check in without unit dispositions", 
+                    "Cannot commit check in without unit dispositions",
                     "Ensure all units contain a disposition before proceeding.");
             alerts.showGenericAlert();
         }
     }
 
     private boolean dispositionsEmpty() {
-        System.out.println("DISPOSITIONSEMPTY");
         boolean containsEmpty = false;
-        System.out.println("checkINTransactionVBoxList: " + checkInTransactionVBoxList.size());
         for (int i = 0; i < checkInTransactionVBoxList.size(); i++) {
-            System.out.println("LOOP");
             if (checkInTransactionVBoxList.get(i).getDispositionComboBox().getValue() == null) {
                 containsEmpty = true;
-                System.out.println("BREAK");
                 break;
             } else {
-                System.out.println("NOT EMPTY");
                 containsEmpty = false;
             }
         }
-        
-        System.out.println("RETURNING");
         return containsEmpty;
     }
 

@@ -8,6 +8,7 @@ import com.hemaapps.hematrace.utilities.FormUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -80,7 +81,7 @@ public class EditUserViewController implements Initializable {
         this.crewIdTextField.setText(user.getCrewId());
     }
 
-    public void handleSaveButtonClicked() throws SQLException {
+    public void handleSaveButtonClicked() throws SQLException, ParseException {
         if (FormUtils.validateAllFieldsFilled(nodeList)) {
             User user = new User();
             user.setUserId(user.getUserId());
@@ -116,7 +117,7 @@ public class EditUserViewController implements Initializable {
 
     }
     
-    public void handleDeleteButtonClicked() throws SQLException, IOException {
+    public void handleDeleteButtonClicked() throws SQLException, IOException, ParseException {
         if (UserDAO.deleteUser(this.selectedUser.getUserId())) {
             closeEditUserView();
             openUserToolsView();

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -99,6 +100,7 @@ public class DatabaseService {
      * @throws SQLException
      */
     public ResultSet callableStatementRs(String query) throws SQLException {
+        init();
         try {
             if (connection == null) {
                 connection = connectionPool.getConnection();
@@ -114,13 +116,16 @@ public class DatabaseService {
     }
 
     public int callableStatementReturnInt(String query, String[] inputs,
-            String[] inputDataTypes) throws SQLException {
+            String[] inputDataTypes) throws SQLException, ParseException {
         init();
-
         CallableStatement cs = null;
         int returnValue = 0;
-        try {
-            connection = connectionPool.getConnection();
+//        try {
+            if (connection == null) {
+                System.out.println("connection is null");
+                connection = connectionPool.getConnection();
+                System.out.println("connection: " + connection);
+            }
             cs = connection.prepareCall(query);
             cs.registerOutParameter(inputs.length + 1, java.sql.Types.INTEGER);
             // This section sets up parameters for the query from the arguments            
@@ -149,26 +154,27 @@ public class DatabaseService {
             }
             cs.execute();
             returnValue = cs.getInt(inputs.length + 1);
-        } catch (Exception e) {
-            //String module, String query, Boolean exit, String error
-            e.printStackTrace();
-            log.error("callableStatement", query, true, e.getMessage());
-        }
+//        } catch (Exception e) {
+//            //String module, String query, Boolean exit, String error
+//            e.printStackTrace();
+//            log.error("callableStatement", query, true, e.getMessage());
+//        } finally {
+//            close();
+//        }
         return returnValue;
 
     }
 
     public ResultSet callableStatementRs(String query, String[] inputs,
             String[] inputDataTypes) throws SQLException {
-
-        CallableStatement cs = null;
         init();
-
+        CallableStatement cs = null;
         try {
             if (connection == null) {
+                System.out.println("CONNECTION IS NULL GETTING CONNECTIOn");
                 connection = connectionPool.getConnection();
+                System.out.println("CONNECTION DONE BEEN GOT: " + connection);
             }
-
             cs = connection.prepareCall(query);
             // This section sets up parameters for the query from the arguments     
             if (inputs != null && inputDataTypes != null) {
